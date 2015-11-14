@@ -7,7 +7,7 @@ The server is configured with the following
  
 # Postgres Data Source
 - Driver Version: postgresql-9.4-1205.jdbc42.jar
-- java:jboss/datasources/PostgresDS
+- Data Source: java:jboss/datasources/PostgresDS
 - connection-url: jdbc:postgresql://postgres:5432/postgres
 - username: postgres
 - password: postgres
