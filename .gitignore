@@ -1,0 +1,9 @@
+.idea
+/helloworld/target/
+/helloworld/project/project/
+/helloworld/project/target/
+/helloworld/deployments/*.war
+/helloworld/deployments/*.jar
+/helloworld/deployments/*.rar
+/helloworld/deployments/*.undeployed
+/helloworld/deployments/*.deployed
