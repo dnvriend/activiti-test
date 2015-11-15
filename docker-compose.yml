@@ -11,6 +11,8 @@ wildfly:
 postgres:
   image: postgres:9.3
   container_name: "postgres"
+  ports:
+    - "5432:5432"
   volumes:
     - "./postgres:/docker-entrypoint-initdb.d"
   environment:

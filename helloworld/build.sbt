@@ -10,6 +10,7 @@ libraryDependencies ++= {
   val akkaVersion = "2.4.0"
   Seq(
     "org.activiti" % "activiti-engine" % "5.19.0",
+    "org.postgresql" % "postgresql" % "9.4-1205-jdbc42",
     "com.typesafe.akka" %% "akka-actor" % akkaVersion,
     "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test",
     "org.scalatest" %% "scalatest" % "2.2.4" % "test"
