@@ -1,6 +1,7 @@
 package com.github.dnvriend
 
 import org.activiti.engine.ProcessEngineConfiguration
+import org.activiti.engine.identity.Group
 import org.activiti.engine.task.Task
 
 /**
@@ -19,6 +20,17 @@ object DeployAndExecuteFinancialReportProcess extends App {
   val repositoryService = processEngine.getRepositoryService
   val runtimeService = processEngine.getRuntimeService
 
+  import scala.collection.JavaConversions._
+  val identityService = processEngine.getIdentityService
+  val accountancy = identityService.createGroupQuery().list().find(_.getId == "accountancy")
+  if(accountancy.isEmpty) {
+    println("Creating accountancy group")
+    val accountancyGroup = identityService.newGroup("accountancy")
+    accountancyGroup.setName("Accountancy")
+    accountancyGroup.setType("assignment")
+    identityService.saveGroup(accountancyGroup)
+  } else println("Accountancy group is already present")
+
   // deploy the process definition
   repositoryService.createDeployment()
     .name("Financial Report")
@@ -33,7 +45,6 @@ object DeployAndExecuteFinancialReportProcess extends App {
   val taskService = processEngine.getTaskService
 
   // dump tasks
-  import scala.collection.JavaConversions._
   val tasksKermitUser = taskService.createTaskQuery().taskCandidateUser("kermit").list()
   val tasksAccountancyGroup = taskService.createTaskQuery().taskCandidateGroup("accountancy").list()
   println("Tasks for kermit:")
