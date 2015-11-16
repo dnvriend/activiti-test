@@ -9,4 +9,4 @@ docker-compose build --no-cache
 docker-compose --x-networking up -d
 echo "Waiting on Activiti..."
 wait_for_server
-open http://$(docker-machine ip dev):8080/activiti-explorer
+open http://kermit:kermit@$(docker-machine ip dev):8080/activiti-explorer
