@@ -54,7 +54,7 @@ class DeployProcessTest extends TestSpec {
     val deploymentOption: Option[Deployment] = repositoryService.createDeploymentQuery().deploymentName("simpletest").single
     deploymentOption should not be 'empty
     deploymentOption.foreach { deployment ⇒
-      repositoryService.deleteDeployment(deployment.getId, true)
+      repositoryService.deleteProcess(deployment.getId, cascade = true) should be a 'success
     }
     repositoryService.createDeploymentQuery().deploymentName("simpletest").single shouldBe 'empty
   }

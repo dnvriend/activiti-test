@@ -16,11 +16,14 @@
 
 package org.github.dnvriend.activity
 
-import org.activiti.engine.history.HistoricProcessInstance
-import org.activiti.engine.task.Task
-import org.activiti.engine.{TaskService, IdentityService, RuntimeService}
+import org.activiti.engine.history.{HistoricDetail, HistoricProcessInstance}
+import org.activiti.engine.identity.{Group, User}
 import org.activiti.engine.query.Query
+import org.activiti.engine.repository.{Deployment, DeploymentBuilder}
 import org.activiti.engine.runtime.ProcessInstance
+import org.activiti.engine.task.Task
+import org.activiti.engine.{RepositoryService, IdentityService, RuntimeService, TaskService}
+
 import scala.collection.JavaConversions._
 import scala.util.Try
 
@@ -39,6 +42,15 @@ object ActivityImplicits {
     def asList: List[B] = query.list().toList
   }
 
+  implicit class RepositoryServiceImplicits(val service: RepositoryService) extends AnyVal {
+    def deleteProcess(deploymentId: String): Try[Unit] = Try(service.deleteDeployment(deploymentId))
+    def deleteProcess(deploymentId: String, cascade: Boolean): Try[Unit] = Try(service.deleteDeployment(deploymentId, cascade))
+  }
+
+  implicit class DeploymentBuilderImplicits(val builder: DeploymentBuilder) extends AnyVal {
+    def doDeploy: Try[Deployment] = Try(builder.deploy)
+  }
+
   implicit class RuntimeServiceImplicits(val service: RuntimeService) extends AnyVal {
     /**
       * Starts a new process instance in the latest version of the process
@@ -52,12 +64,25 @@ object ActivityImplicits {
 
   implicit class IdentityServiceImplicits(val service: IdentityService) extends AnyVal {
     /**
-      * Passes the authenticated user id for this particular thread.
-      * All service method (from any service) invocations done by the same
-      * thread will have access to this authenticatedUserId.
+      * Sets the process initiator. Passes the authenticated user id for
+      * this particular thread. All service method (from any service)
+      * invocations done by the same thread will have access to this
+      * authenticatedUserId.
       */
-    def setAuthUserId(authenticatedUserId: String): Try[Unit] =
+    def authenticateUserId(authenticatedUserId: String): Try[Unit] =
       Try(service.setAuthenticatedUserId(authenticatedUserId))
+
+    /**
+      * Saves the user. If the user already existed, the user is updated.
+      */
+    def save(user: User): Try[Unit] = Try(service.saveUser(user))
+
+    /**
+      * Saves the group. If the group already existed, the group is updated.
+      */
+    def save(group: Group): Try[Unit] = Try(service.saveGroup(group))
+
+    def membership(userId: String, groupId: String): Try[Unit] = Try(service.createMembership(userId, groupId))
   }
 
   implicit class TaskServiceImplicits(val service: TaskService) extends AnyVal {
@@ -65,6 +90,35 @@ object ActivityImplicits {
       * Called when the task is successfully executed.
       */
     def completeTask(taskId: String): Try[Unit] = Try(service.complete(taskId))
+  }
+
+  implicit class UserImplicits(val user: User) extends AnyVal {
+    def dump: String = {
+      import user._
+      s"""
+        |User(
+        |id=$getId,
+        |firstName=$getFirstName,
+        |lastName=$getLastName,
+        |email=$getEmail,
+        |password=$getPassword,
+        |pictureSet=$isPictureSet
+        |)
+      """.stripMargin
+    }
+  }
+
+  implicit class GroupImplicits(val group: Group) extends AnyVal {
+    def dump: String = {
+      import group._
+      s"""
+         |Group(
+         |id=$getId,
+         |name=$getName,
+         |type=$getType
+         |)
+       """.stripMargin
+    }
   }
 
   implicit class HistoricProcessInstanceImplicits(val history: HistoricProcessInstance) extends AnyVal {
@@ -92,6 +146,22 @@ object ActivityImplicits {
       }
   }
 
+  implicit class HistoricDetailImplicits(val history: HistoricDetail) extends AnyVal {
+    def dump: String = {
+      import history._
+      s"""
+         |HistoricDetail(
+         |id=$getId,
+         |processInstanceid=$getProcessInstanceId,
+         |activityInstanceId=$getActivityInstanceId,
+         |executionId=$getExecutionId,
+         |taskId=$getTaskId,
+         |time=$getTime
+         |)
+       """.stripMargin
+    }
+  }
+
   implicit class TaskImplicits(val task: Task) extends AnyVal {
     def dump: String = {
       import task._
@@ -117,6 +187,21 @@ object ActivityImplicits {
         |processVariables=${getProcessVariables.toMap}
         |)
       """.stripMargin
+    }
+  }
+
+  implicit class DeploymentImplicits(val deployment: Deployment) extends AnyVal {
+    def dump: String = {
+      import deployment._
+      s"""
+         |Deployment(
+         |id=$getId,
+         |name=$getName,
+         |deploymentTime=$getDeploymentTime,
+         |category=$getCategory,
+         |tenantId=$getTenantId
+         |)
+       """.stripMargin
     }
   }
 }
