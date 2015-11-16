@@ -1,13 +1,21 @@
 package com.github.dnvriend
 
+import java.text.SimpleDateFormat
+import java.util.Date
+
 import org.activiti.engine.ProcessEngineConfiguration
-import org.activiti.engine.identity.Group
 import org.activiti.engine.task.Task
+
+import scala.util.Try
 
 /**
   * Note: Be sure to add an 'accountancy' group
   */
 object DeployAndExecuteFinancialReportProcess extends App {
+
+  implicit class DateFormat(val date: Date) extends AnyVal {
+    def format: Option[String] = Try(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(date)).toOption
+  }
 
   def dumpTask(task: Task): Unit = println("- " + task.toString + " - processInstanceId=" + task.getProcessInstanceId)
 
@@ -90,5 +98,12 @@ object DeployAndExecuteFinancialReportProcess extends App {
   // verify that the process is actually finished
   val historyService = processEngine.getHistoryService
   val historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(procId).singleResult()
-  println(s"Process instance $procId end time: " + historicProcessInstance.getEndTime)
+  val endDateOption = Option(historicProcessInstance).flatMap(_.getEndTime.format)
+  if(endDateOption.nonEmpty) {
+    endDateOption.foreach { endTime =>
+      println(s"Process instance $procId end time: $endTime")
+    }
+  } else {
+    println(s"Process '$procId' does not exist or has not been completed")
+  }
 }

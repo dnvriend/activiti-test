@@ -9,7 +9,7 @@ import scala.util.Try
 
 object ProcessHistory extends App {
 
-  implicit class DateFormat(date: Date) {
+  implicit class DateFormat(val date: Date) extends AnyVal {
     def format: Option[String] = Try(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(date)).toOption
   }
 
@@ -22,12 +22,12 @@ object ProcessHistory extends App {
   // verify that the process is actually finished
   val historyService = processEngine.getHistoryService
   val historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(procId).singleResult()
-  val endDateOption = historicProcessInstance.getEndTime.format
+  val endDateOption = Option(historicProcessInstance).flatMap(_.getEndTime.format)
   if(endDateOption.nonEmpty) {
     endDateOption.foreach { endTime =>
         println(s"Process instance $procId end time: $endTime")
     }
   } else {
-    println(s"Process '$procId' has not been completed")
+    println(s"Process '$procId' does not exist or has not been completed")
   }
 }
