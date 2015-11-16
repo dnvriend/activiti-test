@@ -100,6 +100,26 @@ object ActivitiImplicits {
       execution.setVariable(variableName, value)
       execution
     }
+
+    def dump: String = {
+      import execution._
+      s"""
+         |DelegateExecution(
+         |id=$getId,
+         |processInstanceId=$getProcessInstanceId,
+         |eventName=$getEventName,
+         |businessKey=$getBusinessKey,
+         |processBusinessKey=$getProcessBusinessKey,
+         |processDefinitionId=$getProcessDefinitionId,
+         |parentId=$getParentId,
+         |superExecutionId=$getSuperExecutionId,
+         |currentActivityId=$getCurrentActivityId,
+         |currentAcivityName=$getCurrentActivityName,
+         |tentantId=$getTenantId,
+         |variables=${getVariables.toMap},
+         |)
+       """.stripMargin
+    }
   }
 
   implicit class UserImplicits(val user: User) extends AnyVal {
