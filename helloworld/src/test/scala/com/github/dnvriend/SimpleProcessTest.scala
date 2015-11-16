@@ -17,11 +17,12 @@
 package com.github.dnvriend
 
 class SimpleProcessTest extends TestSpec {
-
   "SimpleTest" should "deploy a process instance" in {
-    repositoryService.createDeployment().addClasspathResource("processes/bookorder.simple.bpmn20.xml").deploy()
-    val processInstance = Option(runtimeService.startProcessInstanceByKey("simplebookorder"))
+    repositoryService.createDeployment().addClasspathResource("processes/simpletest.bpmn20.xml").deploy()
+    val processInstance = Option(runtimeService.startProcessInstanceByKey("simpletest"))
     processInstance should not be 'empty
-    processInstance.map(_.getProcessDefinitionId)
+    processInstance.foreach { processInstance ⇒
+      println(s"processInstanceId: ${processInstance.getId}")
+    }
   }
 }

@@ -16,13 +16,21 @@
 
 package com.github.dnvriend
 
-import org.activiti.engine.ProcessEngineConfiguration
+import org.activiti.engine._
 import org.scalatest.{ FlatSpec, Matchers }
 
+object Activity {
+  /**
+   * Single instance of the Activity ProcessEngine
+   */
+  val processEngine: ProcessEngine = ProcessEngineConfiguration
+    .createStandaloneInMemProcessEngineConfiguration().buildProcessEngine()
+}
+
 trait TestSpec extends FlatSpec with Matchers {
-  val processEngine = ProcessEngineConfiguration
-    .createStandaloneInMemProcessEngineConfiguration()
-    .buildProcessEngine()
-  val runtimeService = processEngine.getRuntimeService
-  val repositoryService = processEngine.getRepositoryService
+  val runtimeService: RuntimeService = Activity.processEngine.getRuntimeService
+  val repositoryService: RepositoryService = Activity.processEngine.getRepositoryService
+  val identityService: IdentityService = Activity.processEngine.getIdentityService
+  val taskService: TaskService = Activity.processEngine.getTaskService
+  val historyService = Activity.processEngine.getHistoryService
 }
