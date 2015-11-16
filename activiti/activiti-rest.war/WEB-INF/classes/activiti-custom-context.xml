@@ -31,7 +31,7 @@
 	<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
 		<property name="dataSource" ref="dataSource" />
 		<property name="transactionManager" ref="transactionManager" />
-		<property name="databaseSchemaUpdate" value="true" />
+		<property name="databaseSchemaUpdate" value="false" />
 		<property name="mailServerHost" value="localhost" />
 		<property name="mailServerPort" value="5025" />
 		<property name="jobExecutorActivate" value="false" />
