@@ -9,8 +9,8 @@ scalaVersion := "2.11.7"
 libraryDependencies ++= {
   val akkaVersion = "2.4.0"
   Seq(
-    "org.activiti" % "activiti-engine" % "5.19.0",
-    "ch.qos.logback" % "logback-classic" % "1.1.2",
+    "org.activiti" % "activiti-engine" % "5.19.0" withSources() withJavadoc(),
+//    "ch.qos.logback" % "logback-classic" % "1.1.2",
     "org.postgresql" % "postgresql" % "9.4-1205-jdbc42",
     "com.typesafe.akka" %% "akka-actor" % akkaVersion,
     "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test",

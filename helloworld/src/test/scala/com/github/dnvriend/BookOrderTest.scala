@@ -16,38 +16,40 @@
 
 package com.github.dnvriend
 
+import org.activiti.engine.history.HistoricProcessInstance
+import org.activiti.engine.runtime.ProcessInstance
 import org.activiti.engine.task.Task
+import org.github.dnvriend.activity.ActivityImplicits._
 
 import scala.util.Try
 
 class BookOrderTest extends TestSpec {
 
-  def dumpTask(task: Task): Unit = println("- " + task.toString + " - processInstanceId=" + task.getProcessInstanceId)
-
   "BookOrder" should "should complete process" in {
-    import scala.collection.JavaConversions._
     // deploy process
-    repositoryService.createDeployment().addClasspathResource("processes/bookorder.simple.bpmn20.xml").deploy()
+    repositoryService.createDeployment()
+      .addClasspathResource("processes/bookorder.simple.bpmn20.xml")
+      .deploy()
 
     // set user kermit
-    Try(identityService.setAuthenticatedUserId("kermit")) should be a 'success
+    identityService.setAuthUserId("kermit") should be a 'success
 
     // create a new process instance, start the process with the ISBN of '123456'
-    val variableMap = Map("isbn" -> "123456")
-    val processInstance = Option(runtimeService.startProcessInstanceByKey("bookorder", variableMap))
-    processInstance should not be 'empty
+    val processInstance: Try[ProcessInstance] = runtimeService.startProcessByKey("bookorder", Map("isbn" -> "123456"))
+    processInstance should be a 'success
     val procId = processInstance.get.getId
 
     // get the tasks for the group sales
-    val taskList = taskService.createTaskQuery().taskCandidateGroup("sales").list()
-    if (taskList.isEmpty) println("There are not tasks for sales") else {
+    val taskList: List[Task] = taskService.createTaskQuery().taskCandidateGroup("sales").asList
+    if (taskList.isEmpty) println("There are not tasks for sales")
+    else {
       println("Tasks for sales:")
-      taskList.foreach(dumpTask)
+      taskList.foreach(task ⇒ println(task.dump))
     }
-
     taskList should not be 'empty
-    taskService.complete(taskList.head.getId)
-    val historicProcessInstance = Option(historyService.createHistoricProcessInstanceQuery().processInstanceId(procId).singleResult())
-    historicProcessInstance should not be 'empty
+    taskService.completeTask(taskList.head.getId) should be a 'success
+    val historyOption: Option[HistoricProcessInstance] = historyService.createHistoricProcessInstanceQuery().processInstanceId(procId).single
+    historyOption should not be 'empty
+    historyOption.foreach { history ⇒ println(history.dump) }
   }
 }
