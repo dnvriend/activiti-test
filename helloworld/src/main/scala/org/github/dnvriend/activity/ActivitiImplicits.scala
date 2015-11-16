@@ -94,6 +94,10 @@ object ActivitiImplicits {
     def completeTask(taskId: String): Try[Unit] = Try(service.complete(taskId))
   }
 
+  implicit class ProcessInstanceImplicits(val process: ProcessInstance) extends AnyVal {
+    def processVariables: Map[String, AnyRef] = process.getProcessVariables.toMap
+  }
+
   implicit class DelegateExecutionImplicits(val execution: DelegateExecution) extends AnyVal {
     def get(variableName: String): Option[AnyRef] = Option(execution.getVariable(variableName))
     def set(variableName: String, value: AnyRef): DelegateExecution = {

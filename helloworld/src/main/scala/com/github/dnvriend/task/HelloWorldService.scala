@@ -24,6 +24,5 @@ class HelloWorldService extends JavaDelegate {
     val nameOption = execution.get("name")
     val msg: String = nameOption.map(name ⇒ s"Hello $name").getOrElse("Hello unknown!")
     execution.set("msg", msg)
-    println(execution.dump)
   }
 }
