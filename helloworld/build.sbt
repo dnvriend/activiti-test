@@ -13,6 +13,7 @@ libraryDependencies ++= {
     "org.postgresql" % "postgresql" % "9.4-1205-jdbc42",
     "com.typesafe.akka" %% "akka-actor" % akkaVersion,
     "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test",
+    "com.h2database" % "h2" % "1.4.190" % "test",
     "org.scalatest" %% "scalatest" % "2.2.4" % "test"
   )
 }

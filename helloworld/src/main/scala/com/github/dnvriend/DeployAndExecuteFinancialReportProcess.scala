@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015 Dennis Vriend
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.github.dnvriend
 
 import java.text.SimpleDateFormat
@@ -9,8 +25,8 @@ import org.activiti.engine.task.Task
 import scala.util.Try
 
 /**
-  * Note: Be sure to add an 'accountancy' group
-  */
+ * Note: Be sure to add an 'accountancy' group
+ */
 object DeployAndExecuteFinancialReportProcess extends App {
 
   implicit class DateFormat(val date: Date) extends AnyVal {
@@ -31,7 +47,7 @@ object DeployAndExecuteFinancialReportProcess extends App {
   import scala.collection.JavaConversions._
   val identityService = processEngine.getIdentityService
   val accountancy = identityService.createGroupQuery().list().find(_.getId == "accountancy")
-  if(accountancy.isEmpty) {
+  if (accountancy.isEmpty) {
     println("Creating accountancy group")
     val accountancyGroup = identityService.newGroup("accountancy")
     accountancyGroup.setName("Accountancy")
@@ -61,7 +77,7 @@ object DeployAndExecuteFinancialReportProcess extends App {
   tasksAccountancyGroup.foreach(dumpTask)
 
   // when there is a task, fozzie will claim the first one
-  tasksAccountancyGroup.foreach { task =>
+  tasksAccountancyGroup.foreach { task ⇒
     println(s"Fozzie claims task: " + task.toString)
     taskService.claim(task.getId, "fozzie")
   }
@@ -71,7 +87,7 @@ object DeployAndExecuteFinancialReportProcess extends App {
   tasksAssignedToFozzie.foreach(dumpTask)
 
   // complete only the first task assigned to Fozzie
-  tasksAssignedToFozzie.foreach { task =>
+  tasksAssignedToFozzie.foreach { task ⇒
     println(s"Fozzie completes task: " + task.toString)
     taskService.complete(task.getId)
   }
@@ -83,14 +99,14 @@ object DeployAndExecuteFinancialReportProcess extends App {
   tasksManagementGroup.foreach(dumpTask)
 
   // kermit claims the task that has been assigned to management
-  tasksManagementGroup.foreach { task =>
+  tasksManagementGroup.foreach { task ⇒
     println(s"Kermit claims task: " + task.toString)
     taskService.claim(task.getId, "kermit")
   }
 
   // kermit completes all tasks assigned to him
   val tasksAssignedToKermit = taskService.createTaskQuery().taskAssignee("kermit").list()
-  tasksAssignedToKermit.foreach { task =>
+  tasksAssignedToKermit.foreach { task ⇒
     println(s"Kermit completes task: " + task.toString)
     taskService.complete(task.getId)
   }
@@ -99,8 +115,8 @@ object DeployAndExecuteFinancialReportProcess extends App {
   val historyService = processEngine.getHistoryService
   val historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(procId).singleResult()
   val endDateOption = Option(historicProcessInstance).flatMap(_.getEndTime.format)
-  if(endDateOption.nonEmpty) {
-    endDateOption.foreach { endTime =>
+  if (endDateOption.nonEmpty) {
+    endDateOption.foreach { endTime ⇒
       println(s"Process instance $procId end time: $endTime")
     }
   } else {
