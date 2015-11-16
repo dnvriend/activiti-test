@@ -44,18 +44,11 @@ class BookOrderTest extends TestSpec {
 
       // get the tasks for the group sales
       val taskList: List[Task] = taskService.createTaskQuery().taskCandidateGroup("sales").asList
-      if (taskList.isEmpty) println("There are not tasks for sales")
-      else {
-        println("Tasks for sales:")
-        taskList.foreach(task ⇒ println(task.dump))
-      }
       taskList should not be 'empty
       taskService.completeTask(taskList.head.getId) should be a 'success
       val historyOption: Option[HistoricProcessInstance] = historyService.createHistoricProcessInstanceQuery().processInstanceId(procId).single
       historyOption should not be 'empty
-      historyOption.foreach(history ⇒ println(history.dump))
-
-      repositoryService.deleteProcess(deployment.getId) should be a 'success
+      repositoryService.deleteProcess(deployment.id, cascade = true) should be a 'success
     }
   }
 }

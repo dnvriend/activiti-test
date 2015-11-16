@@ -43,8 +43,8 @@ object ActivityImplicits {
   }
 
   implicit class RepositoryServiceImplicits(val service: RepositoryService) extends AnyVal {
-    def deleteProcess(deploymentId: String): Try[Unit] = Try(service.deleteDeployment(deploymentId))
-    def deleteProcess(deploymentId: String, cascade: Boolean): Try[Unit] = Try(service.deleteDeployment(deploymentId, cascade))
+    def deleteProcess(deploymentId: Long): Try[Unit] = Try(service.deleteDeployment(deploymentId.toString))
+    def deleteProcess(deploymentId: Long, cascade: Boolean): Try[Unit] = Try(service.deleteDeployment(deploymentId.toString, cascade))
   }
 
   implicit class DeploymentBuilderImplicits(val builder: DeploymentBuilder) extends AnyVal {
@@ -191,6 +191,7 @@ object ActivityImplicits {
   }
 
   implicit class DeploymentImplicits(val deployment: Deployment) extends AnyVal {
+    def id: Long = deployment.getId.toLong
     def dump: String = {
       import deployment._
       s"""

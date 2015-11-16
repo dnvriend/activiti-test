@@ -25,28 +25,31 @@ import scala.util.Try
 class DeployProcessTest extends TestSpec {
   "Activity Repository" should "deploy a process" in {
     // deploying a process should return the deployment id
-    val deploymentId: String =
-      repositoryService.createDeployment()
-        .addClasspathResource("processes/simpletest.bpmn20.xml")
-        .name("simpletest")
-        .deploy()
-        .getId
+    val deploymentOperation = repositoryService.createDeployment()
+      .addClasspathResource("processes/simpletest.bpmn20.xml")
+      .name("simpletest")
+      .doDeploy
 
-    // get a list of all deployments
-    val deployments: List[Deployment] = repositoryService.createDeploymentQuery().asList
-    deployments.foreach(deployment ⇒ println(deployment))
+    deploymentOperation should be a 'success
 
-    // it should find a deployment with the same id as the one we deployed earlier
-    // ergo the process should be deployed
-    deployments.find(_.getId == deploymentId) should not be 'empty
+    deploymentOperation.foreach { deployment ⇒
+      // get a list of all deployments
+      val deployments: List[Deployment] = repositoryService.createDeploymentQuery().asList
+
+      // it should find a deployment with the same id as the one we deployed earlier
+      // ergo the process should be deployed
+      deployments.find(_.getId == deployment.getId) should not be 'empty
+    }
   }
 
   it should "run a process" in {
     // launch a process instance by
-    val processInstance: Try[ProcessInstance] = runtimeService.startProcessByKey("simpletest")
-    processInstance should be a 'success
-    processInstance.foreach { processInstance ⇒
-      println(s"processInstanceId: ${processInstance.getId}")
+    val deploymentOption = repositoryService.createDeploymentQuery().deploymentName("simpletest").single
+    deploymentOption should not be 'empty
+
+    deploymentOption.foreach { deployment ⇒
+      val processInstance: Try[ProcessInstance] = runtimeService.startProcessByKey("simpletest")
+      processInstance should be a 'success
     }
   }
 
@@ -54,7 +57,7 @@ class DeployProcessTest extends TestSpec {
     val deploymentOption: Option[Deployment] = repositoryService.createDeploymentQuery().deploymentName("simpletest").single
     deploymentOption should not be 'empty
     deploymentOption.foreach { deployment ⇒
-      repositoryService.deleteProcess(deployment.getId, cascade = true) should be a 'success
+      repositoryService.deleteProcess(deployment.id, cascade = true) should be a 'success
     }
     repositoryService.createDeploymentQuery().deploymentName("simpletest").single shouldBe 'empty
   }

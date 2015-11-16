@@ -22,6 +22,8 @@ libraryDependencies ++= {
 
 licenses +=("Apache-2.0", url("http://opensource.org/licenses/apache2.0.php"))
 
+parallelExecution := false
+
 // enable scala code formatting //
 import scalariform.formatter.preferences._
 
