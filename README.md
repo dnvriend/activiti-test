@@ -6,6 +6,8 @@ business people, developers and system admins.
 Start the project with `launch.sh`. Activiti should be available on `http://$(docker-machine ip dev):8080/activiti-explorer`. 
 Activiti should persist to the `postgres` instance. The postgres is available runnint the `plsql-cli.sh` script.
 
+The REST endpoint should be available at: `http://$(docker-machine ip dev)/activiti-rest/service/repository/process-definitions`.
+
 # Default example processes, users and groups
 Activiti will be launched in `demo` mode (`WEB-INF/classes/engine.properties`), which means that the 
 [following users and groups](http://activiti.org/userguide/index.html#activiti.setup) will be automatically created by 
