@@ -16,26 +16,22 @@
 
 package com.github.dnvriend
 
+import org.activiti.engine.runtime.ProcessInstance
 import org.github.dnvriend.activity.ActivitiImplicits._
 
-class HistoryServiceTest extends TestSpec {
+import scala.util.Try
 
-  "HistoryService" should "show history" in {
+class JavaServiceTaskClassDefinitionTest extends TestSpec {
+  "JavaServiceTaskClassDefinition" should "execute process" in {
     val deploymentOperation = repositoryService.createDeployment()
-      .addClasspathResource("processes/simpletest.bpmn20.xml")
-      .name("simpletest")
+      .addClasspathResource("processes/javaservicetask-classdef.bpmn20.xml")
       .doDeploy
-
     deploymentOperation should be a 'success
 
     deploymentOperation.foreach { deployment ⇒
-      identityService.authenticateUserId("kermit") should be a 'success
-      val startProcessOperation = runtimeService.startProcessByKey("simpletest")
-      startProcessOperation should be a 'success
-      startProcessOperation.foreach { processInstance ⇒
-        historyService.createHistoricProcessInstanceQuery().processInstanceId(processInstance.getId).asList should not be 'empty
-        repositoryService.deleteProcess(deployment.id) should be a 'success
-      }
+      val processInstance: Try[ProcessInstance] = runtimeService.startProcessByKey("javaservicetask-classdef", Map("name" -> "John Doe"))
+      processInstance should be a 'success
+      repositoryService.deleteProcess(deployment.id, cascade = true) should be a 'success
     }
   }
 }

@@ -19,7 +19,7 @@ package com.github.dnvriend
 import org.activiti.engine.history.HistoricProcessInstance
 import org.activiti.engine.runtime.ProcessInstance
 import org.activiti.engine.task.Task
-import org.github.dnvriend.activity.ActivityImplicits._
+import org.github.dnvriend.activity.ActivitiImplicits._
 
 import scala.util.Try
 
@@ -28,7 +28,7 @@ class BookOrderTest extends TestSpec {
   "BookOrder" should "should complete process" in {
     // deploy process
     val deploymentOption = repositoryService.createDeployment()
-      .addClasspathResource("processes/bookorder.simple.bpmn20.xml")
+      .addClasspathResource("processes/bookorder.bpmn20.xml")
       .doDeploy
 
     deploymentOption should be a 'success

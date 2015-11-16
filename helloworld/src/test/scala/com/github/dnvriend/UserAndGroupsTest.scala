@@ -16,7 +16,7 @@
 
 package com.github.dnvriend
 
-import org.github.dnvriend.activity.ActivityImplicits._
+import org.github.dnvriend.activity.ActivitiImplicits._
 
 class UserAndGroupsTest extends TestSpec {
   "IdentityService" should "create a user" in {

@@ -1,0 +1,22 @@
+<definitions id="definitions"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd"
+             xmlns:activiti="http://activiti.org/bpmn"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             targetNamespace="http://activiti.org/bpmn20">
+
+    <process id="javaservicetask-classdef" name="Java Service Task Class Definition">
+        <startEvent id="startevent1" name="Start"/>
+        <serviceTask id="serviceTask1" name="Hello World Service" activiti:class="com.github.dnvriend.task.HelloWorldService"/>
+        <scriptTask id="scripttask1" name="Printing message" scriptFormat="groovy">
+            <script>
+                out:println "msg=" + msg;
+            </script>
+        </scriptTask>
+        <endEvent id="endevent1" name="End"/>
+        <sequenceFlow id="sequenceflow1" sourceRef="startevent1" targetRef="serviceTask1"/>
+        <sequenceFlow id="sequenceflow2" sourceRef="serviceTask1" targetRef="scripttask1"/>
+        <sequenceFlow id="sequenceflow3" sourceRef="scripttask1" targetRef="endevent1"/>
+    </process>
+
+</definitions>

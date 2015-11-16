@@ -18,7 +18,7 @@ package com.github.dnvriend
 
 import org.activiti.engine.repository.Deployment
 import org.activiti.engine.runtime.ProcessInstance
-import org.github.dnvriend.activity.ActivityImplicits._
+import org.github.dnvriend.activity.ActivitiImplicits._
 
 import scala.util.Try
 

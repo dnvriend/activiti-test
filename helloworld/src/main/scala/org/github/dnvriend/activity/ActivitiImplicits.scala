@@ -16,6 +16,7 @@
 
 package org.github.dnvriend.activity
 
+import org.activiti.engine.delegate.DelegateExecution
 import org.activiti.engine.history.{HistoricDetail, HistoricProcessInstance}
 import org.activiti.engine.identity.{Group, User}
 import org.activiti.engine.query.Query
@@ -27,7 +28,7 @@ import org.activiti.engine.{RepositoryService, IdentityService, RuntimeService, 
 import scala.collection.JavaConversions._
 import scala.util.Try
 
-object ActivityImplicits {
+object ActivitiImplicits {
 
   implicit class QueryImplicits[A <: Query[_, _], B](val query: Query[A, B]) extends AnyVal {
     /**
@@ -57,6 +58,7 @@ object ActivityImplicits {
       * definition with the given key.
       */
     def startProcessByKey(key: String): Try[ProcessInstance] = Try(service.startProcessInstanceByKey(key))
+    def startProcessById(processDefinitionId: String): Try[ProcessInstance] = Try(service.startProcessInstanceById(processDefinitionId))
 
     def startProcessByKey(processDefinitionKey: String, variables: Map[String, AnyRef]): Try[ProcessInstance] =
       Try(service.startProcessInstanceByKey(processDefinitionKey, variables))
@@ -90,6 +92,14 @@ object ActivityImplicits {
       * Called when the task is successfully executed.
       */
     def completeTask(taskId: String): Try[Unit] = Try(service.complete(taskId))
+  }
+
+  implicit class DelegateExecutionImplicits(val execution: DelegateExecution) extends AnyVal {
+    def get(variableName: String): Option[AnyRef] = Option(execution.getVariable(variableName))
+    def set(variableName: String, value: AnyRef): DelegateExecution = {
+      execution.setVariable(variableName, value)
+      execution
+    }
   }
 
   implicit class UserImplicits(val user: User) extends AnyVal {

@@ -17,7 +17,7 @@
 package com.github.dnvriend
 
 import org.activiti.engine.ProcessEngineConfiguration
-import org.github.dnvriend.activity.ActivityImplicits._
+import org.github.dnvriend.activity.ActivitiImplicits._
 
 object ProcessHistory extends App {
 
