@@ -3,10 +3,13 @@
 business people, developers and system admins. 
 
 # Usage
-Start the project with `launch.sh`. Activiti should be available on `http://$(docker-machine ip dev):8080/activiti-explorer`. 
-Activiti should persist to the `postgres` instance. The postgres is available runnint the `plsql-cli.sh` script.
+Start the project with `launch.sh`. 
 
-The REST endpoint should be available at: `http://$(docker-machine ip dev)/activiti-rest/service/repository/process-definitions`.
+The Activiti Explorer application should be available at `http://$(docker-machine ip dev):8080/activiti-explorer` and 
+the Activiti REST application should be available at `http://$(docker-machine ip dev)/activiti-rest/service/`.
+ 
+Both the `Activiti explorer`, the `Activiti REST` application and the `helloworld` standalone application should persist 
+to the `postgres` instance. The postgres is available running the `plsql-cli.sh` script.
 
 # Default example processes, users and groups
 Activiti will be launched in `demo` mode (`WEB-INF/classes/engine.properties`), which means that the 
@@ -15,9 +18,12 @@ Activiti together with demo processes.
 
 The following users are available (username:password:group): 
 
-- kermit:kermit:admin
-- gonzo:gonzo:manager
-- fozzie:fozzie:user
+
+Username | Password | Group
+---------|----------|------
+kermit   | kermit   | admin
+gonzo    | gonzo    | manager
+fozzie   | fozzie   | user
 
 # Activiti Resources
 - [User Guide for 5.19.0](http://activiti.org/userguide/index.html)
