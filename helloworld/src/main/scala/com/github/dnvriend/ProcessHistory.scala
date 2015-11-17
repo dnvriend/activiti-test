@@ -17,6 +17,10 @@
 package com.github.dnvriend
 
 import org.activiti.engine.ProcessEngineConfiguration
+
+import scala.util.Try
+import org.activiti.engine.history.HistoricProcessInstanceQuery
+
 import org.github.dnvriend.activity.ActivitiImplicits._
 
 object ProcessHistory extends App {
@@ -35,6 +39,6 @@ object ProcessHistory extends App {
       println(s"Process instance $procId end time: ${history.getEndTime}")
     }
   } else {
-    println(s"Process '$procId' does not exist or has not been completed")
+    println(s"Process '$procId' does not exist")
   }
 }
