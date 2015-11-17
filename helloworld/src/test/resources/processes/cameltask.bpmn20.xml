@@ -10,9 +10,11 @@
 
     <process id="SimpleCamelCallProcess" name="Simple Camel Call">
         <startEvent id="startevent1" name="Start"/>
+        <serviceTask id="serviceTask1" name="AddExecutionVariables" activiti:class="com.github.dnvriend.task.AddExecutionVariables"/>
         <serviceTask id="simpleCall" activiti:type="camel"/>
         <endEvent id="endevent1" name="End"/>
-        <sequenceFlow id="sequenceflow1" sourceRef="startevent1" targetRef="simpleCall"/>
+        <sequenceFlow id="sequenceflow1" sourceRef="startevent1" targetRef="serviceTask1"/>
+        <sequenceFlow id="sequenceflow2" sourceRef="serviceTask1" targetRef="simpleCall"/>
         <sequenceFlow id="sequenceflow3" sourceRef="simpleCall" targetRef="endevent1"/>
     </process>
 

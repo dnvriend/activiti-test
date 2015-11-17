@@ -27,7 +27,7 @@ class SimpleCamelTaskTest extends TestSpec {
     deploymentOperation should be a 'success
 
     deploymentOperation.foreach { deployment ⇒
-      val processInstance = runtimeService.startProcessByKey("SimpleCamelCallProcess")
+      val processInstance = runtimeService.startProcessByKey("SimpleCamelCallProcess", Map("abcde" -> "valvalval"))
       processInstance should be a 'success
       repositoryService.deleteDeploymentById(deployment.id, cascade = true) should be a 'success
     }

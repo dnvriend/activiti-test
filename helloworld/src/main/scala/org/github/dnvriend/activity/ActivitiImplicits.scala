@@ -139,7 +139,29 @@ object ActivitiImplicits {
       execution.setVariable(variableName, value)
       execution
     }
-
+    def set(variableMap: Map[String, AnyRef]): DelegateExecution = {
+      import scala.collection.JavaConverters._
+      execution.setVariablesLocal(variableMap.asJava)
+      execution
+    }
+    def variableMap: Map[String, AnyRef] = {
+      import execution._
+      val map = Map("id" -> Option(getId),
+          "processInstanceId" -> Option(getProcessInstanceId),
+          "eventName" -> Option(getEventName),
+          "businessKey" -> Option(getBusinessKey),
+          "processBusinessKey" -> Option(getProcessBusinessKey),
+          "processDefinitionId" -> Option(getProcessDefinitionId),
+          "parentId" -> Option(getParentId),
+          "superExecutionId" -> Option(getSuperExecutionId),
+          "currentActivityId" -> Option(getCurrentActivityId),
+          "currentActivityName" -> Option(getCurrentActivityName),
+          "tentantId" -> Option(getTenantId)
+      ) ++ getVariables.toMap
+        map.collect {
+          case entry @ (key, Some(value)) => (key, value.toString)
+        }
+    }
     def dump: String = {
       import execution._
       s"""

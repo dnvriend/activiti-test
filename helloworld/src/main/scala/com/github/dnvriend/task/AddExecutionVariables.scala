@@ -17,13 +17,10 @@
 package com.github.dnvriend.task
 
 import org.activiti.engine.delegate.{ DelegateExecution, JavaDelegate }
+
 import org.github.dnvriend.activity.ActivitiImplicits._
 
-class HelloWorldService extends JavaDelegate {
-  override def execute(execution: DelegateExecution): Unit = {
-    println(execution.dump)
-    val nameOption = execution.get("name")
-    val msg: String = nameOption.map(name ⇒ s"Hello $name").getOrElse("Hello unknown!")
-    execution.set("msg", msg)
-  }
+class AddExecutionVariables extends JavaDelegate {
+  override def execute(execution: DelegateExecution): Unit =
+    execution.set(execution.variableMap)
 }
