@@ -17,12 +17,12 @@
 package com.github.dnvriend.camel
 
 import org.apache.camel.builder.RouteBuilder
-import org.apache.camel.{ Exchange, Processor }
+import org.apache.camel.{ LoggingLevel, Exchange, Processor }
 
 class HelloWorldRoute extends RouteBuilder {
   override def configure(): Unit = {
-    from("activiti:SimpleCamelCallProcess:simpleCall")
-      .transform()
+    from("activiti:SimpleCamelCallProcess:simpleCall?copyVariablesToBodyAsMap=true&copyVariablesToProperties=true")
+	  .transform()
       .simple("${property.playroundId}")
       .to("activemq:queue:HelloWorldQueue")
 

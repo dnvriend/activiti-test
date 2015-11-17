@@ -54,11 +54,20 @@ object CamelImplicits {
     def bodyOpt[T]: Option[T] =
       Try(exchange.getIn.getBody.asInstanceOf[T]).toOption
 
+    /**
+     *
+     */
+    def props = exchange.getProperties.toMap
+
+    /**
+     *
+     */
     def dump: String = {
       s"""
          |Exchange(
-         |body=${bodyOpt[String]}
+         |body=${bodyOpt[String].getOrElse("")}
          |headers=$headers
+         |properties=$props
          |)
        """.stripMargin
     }
