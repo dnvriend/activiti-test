@@ -8,10 +8,12 @@
              xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
              targetNamespace="http://activiti.org/bpmn20">
 
-<process id="simpletest" name="Simple Test">
+    <process id="SimpleCamelCallProcess" name="Simple Camel Call">
         <startEvent id="startevent1" name="Start"/>
-        <sequenceFlow id="sequenceflow1"
-                      sourceRef="startevent1" targetRef="endevent1"/>
+        <serviceTask id="simpleCall" activiti:type="camel"/>
         <endEvent id="endevent1" name="End"/>
+        <sequenceFlow id="sequenceflow1" sourceRef="startevent1" targetRef="simpleCall"/>
+        <sequenceFlow id="sequenceflow3" sourceRef="simpleCall" targetRef="endevent1"/>
     </process>
+
 </definitions>

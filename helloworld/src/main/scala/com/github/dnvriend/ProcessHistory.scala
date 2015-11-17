@@ -16,19 +16,14 @@
 
 package com.github.dnvriend
 
-import java.text.SimpleDateFormat
-import java.util.Date
-
 import org.activiti.engine.ProcessEngineConfiguration
-import org.activiti.engine.history.HistoricProcessInstanceQuery
 
 import scala.util.Try
+import org.activiti.engine.history.HistoricProcessInstanceQuery
+
+import org.github.dnvriend.activity.ActivitiImplicits._
 
 object ProcessHistory extends App {
-
-  implicit class DateFormat(val date: Date) extends AnyVal {
-    def format: Option[String] = Try(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(date)).toOption
-  }
 
   val procId = "17504"
   // create activiti process engine
@@ -38,19 +33,11 @@ object ProcessHistory extends App {
 
   // verify that the process is actually finished
   val historyService = processEngine.getHistoryService
-  val historicProcessQueryResults: HistoricProcessInstanceQuery =
-    historyService.createHistoricProcessInstanceQuery().processInstanceId(procId)
-
-  val historicProcessInstance = historicProcessQueryResults.singleResult()
-  val endDateOption = Option(historicProcessInstance) flatMap (_.getEndTime.format)
-  if (endDateOption.nonEmpty) {
-    endDateOption.foreach { endTime ⇒
-      println(s"Process instance $procId end time: $endTime")
+  val historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(procId).single
+  if (historicProcessInstance.nonEmpty) {
+    historicProcessInstance.foreach { history ⇒
+      println(s"Process instance $procId end time: ${history.getEndTime}")
     }
-
-  } else if (historicProcessQueryResults.count() == 1) {
-    println(s"Process '$procId' exists but has not been completed")
-
   } else {
     println(s"Process '$procId' does not exist")
   }

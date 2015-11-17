@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.github.dnvriend
+package com.github.dnvriend.task
 
-class SimpleProcessTest extends TestSpec {
-  "SimpleTest" should "deploy a process instance" in {
-    repositoryService.createDeployment().addClasspathResource("processes/simpletest.bpmn20.xml").deploy()
-    val processInstance = Option(runtimeService.startProcessInstanceByKey("simpletest"))
-    processInstance should not be 'empty
-    processInstance.foreach { processInstance ⇒
-      println(s"processInstanceId: ${processInstance.getId}")
-    }
+import org.activiti.engine.delegate.{ DelegateExecution, JavaDelegate }
+import org.github.dnvriend.activity.ActivitiImplicits._
+
+class HelloWorldService extends JavaDelegate {
+  override def execute(execution: DelegateExecution): Unit = {
+    val nameOption = execution.get("name")
+    val msg: String = nameOption.map(name ⇒ s"Hello $name").getOrElse("Hello unknown!")
+    execution.set("msg", msg)
   }
 }
