@@ -32,10 +32,12 @@ class JavaServiceTaskClassAsyncDefinitionTest extends TestSpec {
       val processInstanceOperation = runtimeService.startProcessByKey("javaservicetask-classdef-asyc", Map("name" -> "John Doe"))
       processInstanceOperation should be a 'success
 
-      //
       processInstanceOperation.foreach { processInstance ⇒
-        // in a unit test the asynchronous processes (jobs) will not be asynchronously executed..
-        // therefor they must be executed manually started
+        // The JobExecutor is a component that manages a couple of threads to fire timers
+        // (and later also asynchronous messages). For unit testing scenarios, it is cumbersome to work with
+        // multiple threads. Therefore the API allows to query for (managementService.createJobQuery)
+        // and execute jobs (managementService.executeJob) through the API so that job execution can be
+        // controlled from within a unit test. To avoid interference by the job executor, it can be turned off.
         managementService.createJobQuery().asList.foreach { job ⇒
           // launch the pending job
           managementService.executeJob(job.getId)

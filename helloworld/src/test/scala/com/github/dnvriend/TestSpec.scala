@@ -17,21 +17,27 @@
 package com.github.dnvriend
 
 import org.activiti.engine._
-import org.activiti.engine.impl.history.HistoryLevel
 import org.scalatest.concurrent.Eventually
-import org.scalatest.{ TryValues, FlatSpec, Matchers }
+import org.scalatest.{ FlatSpec, Matchers, TryValues }
+import org.springframework.context.ApplicationContext
+import org.springframework.context.support.ClassPathXmlApplicationContext
+
 import scala.concurrent.duration._
 
+object SpringImplicits {
+  implicit class ApplicationContextImplicits(val context: ApplicationContext) extends AnyVal {
+    def bean[T](beanName: String): T = context.getBean(beanName).asInstanceOf[T]
+  }
+}
+
 object Activity {
+  import SpringImplicits._
+  val context: ApplicationContext = new ClassPathXmlApplicationContext("/spring/spring-beans.xml")
+
   /**
    * Single instance of the Activity ProcessEngine
    */
-  val processEngine: ProcessEngine = ProcessEngineConfiguration
-    .createStandaloneInMemProcessEngineConfiguration()
-    .setHistoryLevel(HistoryLevel.FULL)
-    .setAsyncExecutorEnabled(false) // The asyncExecutorEnabled property is to enable the Async executor instead of the old Job executor.
-    .setJobExecutorActivate(false) // The asyncExecutorActivate property instructs the Activiti Engine to startup the Async executor thread pool at startup.
-    .buildProcessEngine()
+  val processEngine: ProcessEngine = context.bean("processEngine")
 }
 
 trait TestSpec extends FlatSpec with Matchers with TryValues with Eventually {
