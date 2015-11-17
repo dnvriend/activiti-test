@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 import org.activiti.engine.ProcessEngineConfiguration
+import org.activiti.engine.history.HistoricProcessInstanceQuery
 
 import scala.util.Try
 
@@ -37,13 +38,20 @@ object ProcessHistory extends App {
 
   // verify that the process is actually finished
   val historyService = processEngine.getHistoryService
-  val historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(procId).singleResult()
-  val endDateOption = Option(historicProcessInstance).flatMap(_.getEndTime.format)
+  val historicProcessQueryResults: HistoricProcessInstanceQuery =
+    historyService.createHistoricProcessInstanceQuery().processInstanceId(procId)
+
+  val historicProcessInstance = historicProcessQueryResults.singleResult()
+  val endDateOption = Option(historicProcessInstance) flatMap (_.getEndTime.format)
   if (endDateOption.nonEmpty) {
     endDateOption.foreach { endTime ⇒
       println(s"Process instance $procId end time: $endTime")
     }
+
+  } else if (historicProcessQueryResults.count() == 1) {
+    println(s"Process '$procId' exists but has not been completed")
+
   } else {
-    println(s"Process '$procId' does not exist or has not been completed")
+    println(s"Process '$procId' does not exist")
   }
 }
