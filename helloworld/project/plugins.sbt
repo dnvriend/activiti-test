@@ -10,3 +10,6 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-scalariform" % "1.3.0")
 
 // enable updating file headers eg. for copyright
 addSbtPlugin("de.heikoseeberger" % "sbt-header"      % "1.5.0")
+
+// allow conversion to eclipse project
+addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "4.0.0")
