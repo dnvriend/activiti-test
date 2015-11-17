@@ -32,10 +32,14 @@ class JavaServiceTaskClassDefinitionTest extends TestSpec {
       val processInstanceOperation = runtimeService.startProcessByKey("javaservicetask-classdef", Map("name" -> "John Doe"))
       processInstanceOperation should be a 'success
 
+      // the process has finished, only the historic variables can be requested.
       processInstanceOperation.foreach { processInstance ⇒
-        historyService.createHistoricDetailQuery().variableUpdates().asList.collect {
-          case hist: HistoricVariableUpdate ⇒ hist
-        }.map(_.getVariableName) should contain allOf ("msg", "name")
+        historyService.createHistoricDetailQuery()
+          .variableUpdates()
+          .asList
+          .collect {
+            case hist: HistoricVariableUpdate ⇒ hist
+          }.map(_.getVariableName) should contain allOf ("msg", "name")
       }
       repositoryService.deleteDeploymentById(deployment.id, cascade = true) should be a 'success
     }
