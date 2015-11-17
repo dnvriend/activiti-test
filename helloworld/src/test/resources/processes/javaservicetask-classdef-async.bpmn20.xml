@@ -8,9 +8,9 @@
              xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
              targetNamespace="http://activiti.org/bpmn20">
 
-<process id="javaservicetask-classdef" name="Java Service Task Class Definition">
+    <process id="javaservicetask-classdef-asyc" name="Java Service Task Class Definition Asynchronous">
         <startEvent id="startevent1" name="Start"/>
-        <serviceTask id="serviceTask1" name="Hello World Service" activiti:class="com.github.dnvriend.task.HelloWorldService"/>
+        <serviceTask id="serviceTask1" name="Hello World Service" activiti:async="true" activiti:class="com.github.dnvriend.task.HelloWorldService"/>
         <scriptTask id="scripttask1" name="Printing message" scriptFormat="groovy">
             <script>
                 out:println "msg=" + msg;

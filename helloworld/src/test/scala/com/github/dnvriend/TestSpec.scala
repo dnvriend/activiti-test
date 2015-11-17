@@ -18,7 +18,9 @@ package com.github.dnvriend
 
 import org.activiti.engine._
 import org.activiti.engine.impl.history.HistoryLevel
+import org.scalatest.concurrent.Eventually
 import org.scalatest.{ TryValues, FlatSpec, Matchers }
+import scala.concurrent.duration._
 
 object Activity {
   /**
@@ -27,10 +29,14 @@ object Activity {
   val processEngine: ProcessEngine = ProcessEngineConfiguration
     .createStandaloneInMemProcessEngineConfiguration()
     .setHistoryLevel(HistoryLevel.FULL)
+    .setAsyncExecutorEnabled(false) // The asyncExecutorEnabled property is to enable the Async executor instead of the old Job executor.
+    .setJobExecutorActivate(false) // The asyncExecutorActivate property instructs the Activiti Engine to startup the Async executor thread pool at startup.
     .buildProcessEngine()
 }
 
-trait TestSpec extends FlatSpec with Matchers with TryValues {
+trait TestSpec extends FlatSpec with Matchers with TryValues with Eventually {
+
+  implicit val p = PatienceConfig(timeout = 50 seconds)
 
   /**
    * The runtime service provides an interface to start and query process instances.

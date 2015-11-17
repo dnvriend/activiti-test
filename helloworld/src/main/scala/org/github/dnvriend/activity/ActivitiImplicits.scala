@@ -21,7 +21,7 @@ import org.activiti.engine.history.{HistoricVariableUpdate, HistoricDetail, Hist
 import org.activiti.engine.identity.{Group, User}
 import org.activiti.engine.query.Query
 import org.activiti.engine.repository.{Deployment, DeploymentBuilder}
-import org.activiti.engine.runtime.{Execution, ProcessInstance}
+import org.activiti.engine.runtime.{Job, Execution, ProcessInstance}
 import org.activiti.engine.task.Task
 import org.activiti.engine.{RepositoryService, IdentityService, RuntimeService, TaskService}
 
@@ -310,6 +310,24 @@ object ActivitiImplicits {
          |activityId=$getActivityId,
          |processInstanceId=$getProcessInstanceId,
          |parentId=$getParentId,
+         |tentantId=$getTenantId
+         |)
+       """.stripMargin
+    }
+  }
+
+  implicit class JobImplicits(val job: Job) extends AnyVal {
+    def dump: String = {
+      import job._
+      s"""
+         |Job(
+         |id=$getId,
+         |dueDate=$getDuedate,
+         |processInstanceId=$getProcessInstanceId,
+         |executionId=$getExecutionId,
+         |processDefinitionId=$getProcessDefinitionId,
+         |retries=$getRetries,
+         |exceptionMessage=$getExceptionMessage,
          |tentantId=$getTenantId
          |)
        """.stripMargin
