@@ -17,11 +17,11 @@
 package org.github.dnvriend.activity
 
 import org.activiti.engine.delegate.DelegateExecution
-import org.activiti.engine.history.{HistoricDetail, HistoricProcessInstance}
+import org.activiti.engine.history.{HistoricVariableUpdate, HistoricDetail, HistoricProcessInstance}
 import org.activiti.engine.identity.{Group, User}
 import org.activiti.engine.query.Query
 import org.activiti.engine.repository.{Deployment, DeploymentBuilder}
-import org.activiti.engine.runtime.ProcessInstance
+import org.activiti.engine.runtime.{Execution, ProcessInstance}
 import org.activiti.engine.task.Task
 import org.activiti.engine.{RepositoryService, IdentityService, RuntimeService, TaskService}
 
@@ -44,8 +44,8 @@ object ActivitiImplicits {
   }
 
   implicit class RepositoryServiceImplicits(val service: RepositoryService) extends AnyVal {
-    def deleteProcess(deploymentId: Long): Try[Unit] = Try(service.deleteDeployment(deploymentId.toString))
-    def deleteProcess(deploymentId: Long, cascade: Boolean): Try[Unit] = Try(service.deleteDeployment(deploymentId.toString, cascade))
+    def deleteDeploymentById(deploymentId: Long): Try[Unit] = Try(service.deleteDeployment(deploymentId.toString))
+    def deleteDeploymentById(deploymentId: Long, cascade: Boolean): Try[Unit] = Try(service.deleteDeployment(deploymentId.toString, cascade))
   }
 
   implicit class DeploymentBuilderImplicits(val builder: DeploymentBuilder) extends AnyVal {
@@ -53,6 +53,18 @@ object ActivitiImplicits {
   }
 
   implicit class RuntimeServiceImplicits(val service: RuntimeService) extends AnyVal {
+
+    def getVar(executionId: String, variableName: String): Try[AnyRef] =
+      Try(service.getVariable(executionId, variableName))
+
+    def getVarAs[A](executionId: String, variableName: String): Try[A] =
+      Try(service.getVariable(executionId, variableName).asInstanceOf[A])
+
+    /**
+      * All variables visible from the given execution scope (including parent scopes).
+      */
+    def getVars(executionId: String): Try[Map[String, AnyRef]] = Try(service.getVariables(executionId).toMap)
+
     /**
       * Starts a new process instance in the latest version of the process
       * definition with the given key.
@@ -96,6 +108,29 @@ object ActivitiImplicits {
 
   implicit class ProcessInstanceImplicits(val process: ProcessInstance) extends AnyVal {
     def processVariables: Map[String, AnyRef] = process.getProcessVariables.toMap
+
+    def dump: String = {
+      import process._
+      s"""
+         |ProcessInstance(
+         |id=$getId,
+         |suspended=$isSuspended,
+         |ended=$isEnded,
+         |activityId=$getActivityId,
+         |processInstanceId=$getProcessInstanceId,
+         |parentId=$getParentId,
+         |tentantId=$getTenantId,
+         |processDefinitionId=$getProcessDefinitionId,
+         |processDefinitionName=$getProcessDefinitionName,
+         |processDefinitionKey=$getProcessDefinitionKey,
+         |processDefinitionVersion=$getProcessDefinitionVersion,
+         |deploymentId=$getDeploymentId,
+         |businessKey=$getBusinessKey,
+         |processVariables=${getProcessVariables.toMap},
+         |name=$getName
+         |)
+       """.stripMargin
+    }
   }
 
   implicit class DelegateExecutionImplicits(val execution: DelegateExecution) extends AnyVal {
@@ -196,6 +231,26 @@ object ActivitiImplicits {
     }
   }
 
+  implicit class HistoricVariableUpdateImplicits(val history: HistoricVariableUpdate) extends AnyVal {
+    def dump: String = {
+      import history._
+      s"""
+         |HistoricVariableUpdate(
+         |id=$getId,
+         |processInstanceid=$getProcessInstanceId,
+         |activityInstanceId=$getActivityInstanceId,
+         |executionId=$getExecutionId,
+         |taskId=$getTaskId,
+         |time=$getTime,
+         |variableName=$getVariableName,
+         |variableTypeName=$getVariableTypeName,
+         |value=$getValue,
+         |revision=$getRevision
+         |)
+       """.stripMargin
+    }
+  }
+
   implicit class TaskImplicits(val task: Task) extends AnyVal {
     def dump: String = {
       import task._
@@ -235,6 +290,27 @@ object ActivitiImplicits {
          |deploymentTime=$getDeploymentTime,
          |category=$getCategory,
          |tenantId=$getTenantId
+         |)
+       """.stripMargin
+    }
+  }
+
+  /**
+    * An Execution Represent a 'path of execution' in a process instance.
+    * Note that a ProcessInstance also is an execution.
+    */
+  implicit class ExecutionImplicits(val execution: Execution) extends AnyVal {
+    def dump: String = {
+      import execution._
+      s"""
+         |Execution(
+         |id=$getId,
+         |suspended=$isSuspended,
+         |ended=$isEnded,
+         |activityId=$getActivityId,
+         |processInstanceId=$getProcessInstanceId,
+         |parentId=$getParentId,
+         |tentantId=$getTenantId
          |)
        """.stripMargin
     }

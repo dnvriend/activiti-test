@@ -48,7 +48,7 @@ class BookOrderTest extends TestSpec {
       taskService.completeTask(taskList.head.getId) should be a 'success
       val historyOption: Option[HistoricProcessInstance] = historyService.createHistoricProcessInstanceQuery().processInstanceId(procId).single
       historyOption should not be 'empty
-      repositoryService.deleteProcess(deployment.id, cascade = true) should be a 'success
+      repositoryService.deleteDeploymentById(deployment.id, cascade = true) should be a 'success
     }
   }
 }

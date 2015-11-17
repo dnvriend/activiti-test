@@ -16,22 +16,28 @@
 
 package com.github.dnvriend
 
-import org.activiti.engine.runtime.ProcessInstance
+import org.activiti.engine.history.HistoricVariableUpdate
 import org.github.dnvriend.activity.ActivitiImplicits._
-
-import scala.util.Try
 
 class JavaServiceTaskClassDefinitionTest extends TestSpec {
   "JavaServiceTaskClassDefinition" should "execute process" in {
     val deploymentOperation = repositoryService.createDeployment()
       .addClasspathResource("processes/javaservicetask-classdef.bpmn20.xml")
       .doDeploy
+
     deploymentOperation should be a 'success
 
     deploymentOperation.foreach { deployment ⇒
-      val processInstance: Try[ProcessInstance] = runtimeService.startProcessByKey("javaservicetask-classdef", Map("name" -> "John Doe"))
-      processInstance should be a 'success
-      repositoryService.deleteProcess(deployment.id, cascade = true) should be a 'success
+
+      val processInstanceOperation = runtimeService.startProcessByKey("javaservicetask-classdef", Map("name" -> "John Doe"))
+      processInstanceOperation should be a 'success
+
+      processInstanceOperation.foreach { processInstance ⇒
+        historyService.createHistoricDetailQuery().variableUpdates().asList.collect {
+          case hist: HistoricVariableUpdate ⇒ hist
+        }.map(_.getVariableName) should contain allOf ("msg", "name")
+      }
+      repositoryService.deleteDeploymentById(deployment.id, cascade = true) should be a 'success
     }
   }
 }

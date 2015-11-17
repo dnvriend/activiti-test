@@ -17,17 +17,20 @@
 package com.github.dnvriend
 
 import org.activiti.engine._
-import org.scalatest.{ FlatSpec, Matchers }
+import org.activiti.engine.impl.history.HistoryLevel
+import org.scalatest.{ TryValues, FlatSpec, Matchers }
 
 object Activity {
   /**
    * Single instance of the Activity ProcessEngine
    */
   val processEngine: ProcessEngine = ProcessEngineConfiguration
-    .createStandaloneInMemProcessEngineConfiguration().buildProcessEngine()
+    .createStandaloneInMemProcessEngineConfiguration()
+    .setHistoryLevel(HistoryLevel.FULL)
+    .buildProcessEngine()
 }
 
-trait TestSpec extends FlatSpec with Matchers {
+trait TestSpec extends FlatSpec with Matchers with TryValues {
 
   /**
    * The runtime service provides an interface to start and query process instances.

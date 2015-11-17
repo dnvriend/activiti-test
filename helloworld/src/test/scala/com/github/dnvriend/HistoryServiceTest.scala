@@ -34,7 +34,7 @@ class HistoryServiceTest extends TestSpec {
       startProcessOperation should be a 'success
       startProcessOperation.foreach { processInstance ⇒
         historyService.createHistoricProcessInstanceQuery().processInstanceId(processInstance.getId).asList should not be 'empty
-        repositoryService.deleteProcess(deployment.id) should be a 'success
+        repositoryService.deleteDeploymentById(deployment.id, cascade = true) should be a 'success
       }
     }
   }
