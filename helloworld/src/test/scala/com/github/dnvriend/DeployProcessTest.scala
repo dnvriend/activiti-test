@@ -61,8 +61,4 @@ class DeployProcessTest extends TestSpec {
     }
     repositoryService.createDeploymentQuery().deploymentName("simpletest").single shouldBe 'empty
   }
-
-  it should "pause" in {
-    Thread.sleep(60000)
-  }
 }

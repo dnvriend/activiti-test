@@ -23,7 +23,7 @@ class SimpleCamelTaskTest extends TestSpec {
     val deploymentOperation = repositoryService.createDeployment()
       .addClasspathResource("processes/cameltask.bpmn20.xml")
       .doDeploy
-      
+
     val variableMap: Map[String, Object] = Map("playroundId" -> "123456")
 
     deploymentOperation should be a 'success
