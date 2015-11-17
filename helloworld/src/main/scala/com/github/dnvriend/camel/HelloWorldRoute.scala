@@ -22,6 +22,8 @@ import org.apache.camel.{ Exchange, Processor }
 class HelloWorldRoute extends RouteBuilder {
   override def configure(): Unit = {
     from("activiti:SimpleCamelCallProcess:simpleCall")
+      .transform()
+      .simple("${property.playroundId}")
       .to("activemq:queue:HelloWorldQueue")
 
     from("activemq:queue:HelloWorldQueue")
