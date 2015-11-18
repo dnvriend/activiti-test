@@ -2,8 +2,7 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL
              http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd
-             http://activiti.org/bpmn
-             file://activiti-bpmn-extensions-5.18.xsd"
+             http://activiti.org/bpmn https://raw.githubusercontent.com/Activiti/Activiti/master/modules/activiti-bpmn-converter/src/main/resources/org/activiti/impl/bpmn/parser/activiti-bpmn-extensions-5.18.xsd"
              xmlns:activiti="http://activiti.org/bpmn"
              xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
              targetNamespace="http://activiti.org/bpmn20">

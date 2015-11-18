@@ -13,6 +13,7 @@
     <logger name="org.springframework" level="info"/>
     <logger name="org.apache.camel.component.jms" level="info"/>
     <logger name="org.github.dnvriend" level="debug"/>
+    <logger name="org.activiti" level="info" />
 
     <root level="info">
         <appender-ref ref="console"/>

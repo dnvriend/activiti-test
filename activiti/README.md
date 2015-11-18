@@ -7,3 +7,6 @@ to connect to the Postgres database.
 The Activiti-explorer is configured by changing files in the following location: ``activiti-explorer.war/META-INF/classes/` 
 
 The following files have been changed: `activiti-custom-context.xml` and `db.properties`.
+
+# Build
+To build the image, please first execute `wildfly/docker-build.sh` then execute `activiti/docker-build.sh`.

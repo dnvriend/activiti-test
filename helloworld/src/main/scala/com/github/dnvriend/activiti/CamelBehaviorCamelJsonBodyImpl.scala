@@ -18,31 +18,33 @@ package com.github.dnvriend.activiti
 
 import java.util
 
-import org.activiti.camel.{ ActivitiProducer, ActivitiEndpoint }
 import org.activiti.camel.impl.CamelBehaviorBodyAsMapImpl
+import org.activiti.camel.{ ActivitiEndpoint, ActivitiProducer }
 import org.activiti.engine.impl.pvm.delegate.ActivityExecution
 import org.apache.camel.Exchange
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization._
 import org.json4s.{ Formats, NoTypeHints }
+
 import scala.collection.JavaConversions._
 
 /**
  * Converts the variables to a JSON Map String literal
  */
-class CamelBehaviorCamelJsonBodyImpl extends CamelBehaviorBodyAsMapImpl {
-  private val serialVersionUID = 1L
-
-  implicit val formats: Formats = Serialization.formats(NoTypeHints)
-
+object CamelBehaviorCamelJsonBody {
   final val ActivitiProcessInstanceId = "ACTIVITI_PROCESS_INSTANCE_ID"
 
   final val ActivitiProcessDefinitionId = "ACTIVITI_PROCESS_DEFINITION_ID"
 
-  final val ActivitiExecutionId = "ACTIVITI_EXECUTION_ID"
+  final val ActivitiProcessKey = "ACTIVITI_PROCESS_KEY"
 
-  override def setPropertTargetVariable(endpoint: ActivitiEndpoint): Unit =
-    super.setPropertTargetVariable(endpoint)
+  final val ActivitiExecutionId = "ACTIVITI_EXECUTION_ID"
+}
+
+class CamelBehaviorCamelJsonBodyImpl extends CamelBehaviorBodyAsMapImpl {
+  import CamelBehaviorCamelJsonBody._
+
+  implicit val formats: Formats = Serialization.formats(NoTypeHints)
 
   override def createExchange(activityExecution: ActivityExecution, endpoint: ActivitiEndpoint): Exchange = {
     val exchange = super.createExchange(activityExecution, endpoint)
@@ -53,12 +55,21 @@ class CamelBehaviorCamelJsonBodyImpl extends CamelBehaviorBodyAsMapImpl {
   }
 
   override def copyVariablesToBodyAsMap(variables: util.Map[String, AnyRef], exchange: Exchange): Unit = {
+    val processInstanceId: Option[String] = Option(exchange.getProperty(ActivitiProducer.PROCESS_ID_PROPERTY)).map(_.asInstanceOf[String])
+    val processDefinitionId: Option[String] = Option(exchange.getProperty(ActivitiProcessDefinitionId)).map(_.asInstanceOf[String])
+    val executionId: Option[String] = Option(exchange.getProperty(ActivitiProducer.EXECUTION_ID_PROPERTY)).map(_.asInstanceOf[String])
+    val processKey: Option[String] = processDefinitionId.flatMap(_.split(":").headOption)
     val json: String = write(variables.toMap ++
       Map(
-        ActivitiProcessInstanceId -> exchange.getProperty(ActivitiProducer.PROCESS_ID_PROPERTY),
-        ActivitiProcessDefinitionId -> exchange.getProperty(ActivitiProcessDefinitionId),
-        ActivitiExecutionId -> exchange.getProperty(ActivitiProducer.EXECUTION_ID_PROPERTY)
-      ))
+        ActivitiProcessInstanceId -> processInstanceId,
+        ActivitiProcessDefinitionId -> processDefinitionId,
+        ActivitiExecutionId -> executionId,
+        ActivitiProcessKey -> processKey
+
+      ).collect {
+          case (key, Some(value)) ⇒ (key, value)
+        }
+    )
     exchange.getIn.setBody(json)
   }
 }

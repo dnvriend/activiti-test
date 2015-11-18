@@ -20,3 +20,6 @@ The server is configured with the following
 - Username: admin
 - Password: adminactivemq
 - ServerUrl: tcp://activemq:61616
+
+# Build
+To build the image, please execute `wildfly/docker-build.sh`.

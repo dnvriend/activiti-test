@@ -1,6 +1,6 @@
 
 wildfly:
-  build: ./activiti
+  image: dnvriend/activiti:5.19.0
   container_name: "wildfly"
   ports:
     - "8080:8080"

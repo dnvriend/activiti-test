@@ -16,8 +16,8 @@
 
 package com.github.dnvriend.camel
 
+import org.apache.camel.LoggingLevel
 import org.apache.camel.builder.RouteBuilder
-import org.apache.camel.{ LoggingLevel, Exchange, Processor }
 
 /**
  * Activiti simply activates a specific Camel Route that can be identified by the
@@ -36,6 +36,7 @@ import org.apache.camel.{ LoggingLevel, Exchange, Processor }
  * CamelTask here: http://activiti.org/userguide/index.html#bpmnCamelTask
  */
 class HelloWorldRoute extends RouteBuilder {
+
   override def configure(): Unit = {
     /**
      * activated by the task `simpleCall` from the process `SimpleCamelCallProcess`
@@ -46,15 +47,37 @@ class HelloWorldRoute extends RouteBuilder {
      * and other process variables that have been saved in the Activiti process.
      */
     from("activiti:SimpleCamelCallProcess:simpleCall")
-      //        .log(LoggingLevel.INFO, "activiti:SimpleCamelCallProcess:simpleCall")
-      .to("activemq:queue:HelloWorldQueue")
-    //        .to("log:com.github.dnvriend?showAll=true")
+      .log(LoggingLevel.INFO, "activiti:SimpleCamelCallProcess:simpleCall")
+      .to("activemq:queue:LogQueue")
 
     /**
-     * Consuming messages from the HelloWorldQueue
+     * Just launch the activiti process "javaservicetask-classdef",
+     * no bells and whistles
      */
-    from("activemq:queue:HelloWorldQueue")
-      .id("Consume from HelloWorldQueue")
-      .to("log:org.github.dnvriend.camel.HelloWorldRoute?showAll=true")
+    from("direct:startProcessFirst")
+      .to("activiti:javaservicetask-classdef")
+
+    /**
+     * Launch the activiti process with a process initiator 'kermit'
+     */
+    from("direct:startProcessSecond")
+      .setHeader("CamelProcessInitiatorHeader", constant("kermit"))
+      .to("activiti:javaservicetask-classdef?processInitiatorHeaderName=CamelProcessInitiatorHeader")
+
+    /**
+     * Launch the activiti process with the ActivitiPropertiesProcessor
+     * that will set headers needed for the execution of a process
+     */
+    from("direct:startProcessThird")
+      .process(new ActivitiPropertiesProcessor)
+      .to("activiti:javaservicetask-classdef")
+    //      .to("log:startProcessThird?showAll=true")
+
+    /**
+     * Consuming messages from the LogQueue
+     */
+    from("activemq:queue:LogQueue")
+      .id("Consume from LogQueue")
+      .to("log:Consume from LogQueue?showAll=true")
   }
 }

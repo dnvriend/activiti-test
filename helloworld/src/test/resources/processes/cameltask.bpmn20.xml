@@ -16,16 +16,6 @@
         </documentation>
         <startEvent id="startevent1" name="Start"/>
 
-        <!-- AddExecutionVariables is not needed anymore, as the CamelBehaviorCamelJsonBodyImpl does that for us -->
-        <!--<serviceTask id="serviceTask1" name="AddExecutionVariables" activiti:class="com.github.dnvriend.task.AddExecutionVariables">-->
-            <!--<documentation>-->
-                <!--Adds Activiti process specific information to the process instance variables so that the-->
-                <!--activiti component can add them to the Camel exchange when the Activiti Camel component's-->
-                <!--settings 'copyVariablesToBodyAsMap=true' and 'copyVariablesToProperties=true' have been set.-->
-                <!--The variables will be set to the body, as a Map and to the properties of the exchange.-->
-            <!--</documentation>-->
-        <!--</serviceTask>-->
-
         <serviceTask id="simpleCall" name="Calling CamelRoute" activiti:type="camel">
             <documentation>
                 The Camel task allows to send messages to and receive messages from Camel.

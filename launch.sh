@@ -12,9 +12,30 @@ function wait_for_server() {
 	RESPONSE_CODE=$($CHECK_RESPONSE)
   done
 }
+
+function check_for_wildfly_image() {
+if [[ "$(docker images -q dnvriend/wildfly 2> /dev/null)" == "" ]];
+then
+    cd wildfly
+    ./docker-build.sh
+    cd ..
+fi
+}
+
+function check_for_activiti_image() {
+if [[ "$(docker images -q dnvriend/activiti 2> /dev/null)" == "" ]];
+then
+    cd activiti
+    ./docker-build.sh
+    cd ..
+fi
+}
+
 docker rm -f $(docker ps -aq)
 docker-compose build --no-cache
 docker-compose --x-networking up -d
+check_for_wildfly_image
+check_for_activiti_image
 echo "Waiting on Activiti..."
 wait_for_server
 open http://kermit:kermit@$MACHINE_IP:8080/activiti-explorer

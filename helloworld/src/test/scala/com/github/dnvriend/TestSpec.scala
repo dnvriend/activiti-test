@@ -16,13 +16,19 @@
 
 package com.github.dnvriend
 
+import com.github.dnvriend.SpringImplicits._
 import org.activiti.engine._
+import org.activiti.engine.repository.Deployment
+import org.apache.camel.{ ProducerTemplate, CamelContext }
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{ FlatSpec, Matchers, TryValues }
 import org.springframework.context.ApplicationContext
 import org.springframework.context.support.ClassPathXmlApplicationContext
+import com.github.dnvriend.activiti.ActivitiImplicits._
+import scala.collection.JavaConverters._
 
 import scala.concurrent.duration._
+import scala.util.Try
 
 object SpringImplicits {
   implicit class ApplicationContextImplicits(val context: ApplicationContext) extends AnyVal {
@@ -31,18 +37,23 @@ object SpringImplicits {
 }
 
 object Activity {
-  import SpringImplicits._
   val context: ApplicationContext = new ClassPathXmlApplicationContext("/spring/spring-beans.xml")
 
   /**
    * Single instance of the Activity ProcessEngine
    */
   val processEngine: ProcessEngine = context.bean("processEngine")
+
+  val camelContext: CamelContext = context.bean("camelContext")
 }
 
 trait TestSpec extends FlatSpec with Matchers with TryValues with Eventually {
 
-  implicit val p = PatienceConfig(timeout = 50 seconds)
+  implicit val p = PatienceConfig(timeout = 50.seconds)
+
+  val camelContext: CamelContext = Activity.camelContext
+
+  val producerTemplate: ProducerTemplate = camelContext.createProducerTemplate()
 
   /**
    * The runtime service provides an interface to start and query process instances.
@@ -84,4 +95,18 @@ trait TestSpec extends FlatSpec with Matchers with TryValues with Eventually {
    * The management service can be used to query the Activiti tables and execute jobs.
    */
   val managementService: ManagementService = Activity.processEngine.getManagementService
+
+  /**
+   * Deploys a classPathResource relative to the 'processes' directory
+   */
+  def deploy(classPathResourceName: String): Try[Deployment] =
+    repositoryService.createDeployment()
+      .addClasspathResource(s"processes/$classPathResourceName")
+      .doDeploy
+
+  def sendBodyAndHeaders(endpointUrl: String, body: String = "", headers: Map[String, AnyRef] = Map()): Try[Unit] =
+    Try(producerTemplate.sendBodyAndHeaders(endpointUrl, body, headers.asJava))
+
+  def requestBodyAndHeaders(endpointUrl: String, body: String, headers: Map[String, AnyRef]): Try[Unit] =
+    Try(producerTemplate.requestBodyAndHeaders(endpointUrl, body, headers.asJava))
 }
