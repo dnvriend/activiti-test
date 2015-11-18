@@ -1,4 +1,7 @@
 .idea
+.DS_Store
+.project
+.xml/
 /helloworld/target/
 /helloworld/project/project/
 /helloworld/project/target/
