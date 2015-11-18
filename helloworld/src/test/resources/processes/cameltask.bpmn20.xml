@@ -11,6 +11,37 @@
     <process id="SimpleCamelCallProcess" name="Simple Camel Call">
         <startEvent id="startevent1" name="Start"/>
         <serviceTask id="serviceTask1" name="AddExecutionVariables" activiti:class="com.github.dnvriend.task.AddExecutionVariables"/>
+
+        <!--+
+            | The Camel task allows to send messages to and receive messages from Camel.
+            | The Camel task is implemented as a Service Task and is defined by setting 'camel'
+            | for the type of the service task.
+            |
+            | The Activiti Engine looks for a camelContext bean in the Spring container.
+            | The camelContext bean defines the Camel routes that will be loaded by the Camel
+            | container.
+            +-->
+
+        <!--+
+            | The integration logic is all delegated to the Camel container, this has the advantage
+            | that Activiti does not have to know anything about integration.
+            +-->
+
+        <!--+
+            | Activiti simply activates a specific Camel Route that can be identified by the
+            | Activiti process id='SimpleCamelCallProcess' appended with
+            | the Activiti task id='simplecall'. In the CamelRoute the 'from' component
+            | has the following format: 'from("activiti:SimpleCamelCallProcess:simpleCall")'
+            |
+            | Notice the format of the from endpoint. It is consisted of three parts:
+            | 1. activiti              : refers to Activiti endpoint
+            | 2. SimpleCamelCallProcess: name of the process
+            | 3. simpleCall            : name of the Camel service in the process
+            |
+            | For more information read the *whole* section, from top to bottom about the
+            | CamelTask here: http://activiti.org/userguide/index.html#bpmnCamelTask
+            +-->
+        
         <serviceTask id="simpleCall" activiti:type="camel"/>
         <endEvent id="endevent1" name="End"/>
         <sequenceFlow id="sequenceflow1" sourceRef="startevent1" targetRef="serviceTask1"/>
