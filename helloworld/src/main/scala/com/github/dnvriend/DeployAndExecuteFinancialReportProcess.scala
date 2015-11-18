@@ -16,10 +16,10 @@
 
 package com.github.dnvriend
 
+import com.github.dnvriend.activiti.ActivitiImplicits._
 import org.activiti.engine.ProcessEngineConfiguration
 import org.activiti.engine.identity.Group
 import org.activiti.engine.task.Task
-import org.github.dnvriend.activity.ActivitiImplicits._
 
 import scala.util.Try
 

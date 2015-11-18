@@ -15,6 +15,7 @@ libraryDependencies ++= {
     "org.activiti" % "activiti-camel" % activitiVersion withSources() withJavadoc(),
     "org.apache.activemq" % "activemq-camel" % activemqVersion,
     "org.apache.activemq" % "activemq-pool" % activemqVersion,
+    "org.json4s" %% "json4s-native" % "3.3.0",
     "org.postgresql" % "postgresql" % "9.4-1205-jdbc42",
     "com.typesafe.akka" %% "akka-actor" % akkaVersion,
     "ch.qos.logback" % "logback-classic" % "1.1.2",

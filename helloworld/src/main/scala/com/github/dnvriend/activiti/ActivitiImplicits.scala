@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.github.dnvriend.activity
+package com.github.dnvriend.activiti
 
 import org.activiti.engine.delegate.DelegateExecution
 import org.activiti.engine.history.{HistoricVariableUpdate, HistoricDetail, HistoricProcessInstance}
@@ -75,8 +75,7 @@ object ActivitiImplicits {
       Try(service.startProcessInstanceByKey(processDefinitionKey))
 
     /**
-      * Starts a new process instance with the given process definition id, which should be a number.
-      * Deploying a process should return the `Deployment` which contains the deployment id
+      * Starts a new process instance with the given process definition id, which is a String like `SimpleCamelCallProcess:1:3`
       * @param processDefinitionId The process definition id
       */
     def startProcessById(processDefinitionId: String): Try[ProcessInstance] =

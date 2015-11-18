@@ -16,8 +16,8 @@
 
 package com.github.dnvriend
 
+import com.github.dnvriend.activiti.ActivitiImplicits._
 import org.activiti.engine.history.{ HistoricDetail, HistoricVariableUpdate }
-import org.github.dnvriend.activity.ActivitiImplicits._
 
 import scala.collection.JavaConversions._
 

@@ -16,7 +16,7 @@
 
 package com.github.dnvriend
 
-import org.github.dnvriend.activity.ActivitiImplicits._
+import com.github.dnvriend.activiti.ActivitiImplicits._
 
 class HistoryServiceTest extends TestSpec {
 

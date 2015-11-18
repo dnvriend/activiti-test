@@ -16,8 +16,8 @@
 
 package com.github.dnvriend.task
 
+import com.github.dnvriend.activiti.ActivitiImplicits._
 import org.activiti.engine.delegate.{ DelegateExecution, JavaDelegate }
-import org.github.dnvriend.activity.ActivitiImplicits._
 
 class HelloWorldService extends JavaDelegate {
   override def execute(execution: DelegateExecution): Unit = {

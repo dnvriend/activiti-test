@@ -16,7 +16,7 @@
 
 package com.github.dnvriend
 
-import org.github.dnvriend.activity.ActivitiImplicits._
+import com.github.dnvriend.activiti.ActivitiImplicits._
 
 class SimpleCamelTaskTest extends TestSpec {
   "Activiti" should "support camel and activemq integration" in {
@@ -24,13 +24,16 @@ class SimpleCamelTaskTest extends TestSpec {
       .addClasspathResource("processes/cameltask.bpmn20.xml")
       .doDeploy
 
-    val variableMap: Map[String, Object] = Map("playroundId" -> "123456")
-
     deploymentOperation should be a 'success
 
+    val variableMap: Map[String, Object] = Map("playroundId" -> "123456")
+    val startProcessOperation = runtimeService.startProcessByKey("SimpleCamelCallProcess", variableMap)
+    startProcessOperation should be a 'success
+
     deploymentOperation.foreach { deployment ⇒
-      val processInstance = runtimeService.startProcessByKey("SimpleCamelCallProcess", variableMap)
-      processInstance should be a 'success
+      startProcessOperation.foreach { processInstance ⇒
+        //        println(processInstance.dump)
+      }
       repositoryService.deleteDeploymentById(deployment.id, cascade = true) should be a 'success
     }
   }

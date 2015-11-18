@@ -16,8 +16,8 @@
 
 package com.github.dnvriend
 
+import com.github.dnvriend.activiti.ActivitiImplicits._
 import org.activiti.engine.history.HistoricVariableUpdate
-import org.github.dnvriend.activity.ActivitiImplicits._
 
 class JavaServiceTaskClassDefinitionTest extends TestSpec {
   "JavaServiceTaskClassDefinition" should "execute process" in {
