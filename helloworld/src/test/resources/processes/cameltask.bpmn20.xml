@@ -30,7 +30,7 @@
         <!--+
             | Activiti simply activates a specific Camel Route that can be identified by the
             | Activiti process id='SimpleCamelCallProcess' appended with
-            | the Activiti task id='simplecall'. In the CamelRoute the 'from' component
+            | the Activiti task id='simpleCall'. In the CamelRoute the 'from' component
             | has the following format: 'from("activiti:SimpleCamelCallProcess:simpleCall")'
             |
             | Notice the format of the from endpoint. It is consisted of three parts:
@@ -41,7 +41,7 @@
             | For more information read the *whole* section, from top to bottom about the
             | CamelTask here: http://activiti.org/userguide/index.html#bpmnCamelTask
             +-->
-        
+
         <serviceTask id="simpleCall" activiti:type="camel"/>
         <endEvent id="endevent1" name="End"/>
         <sequenceFlow id="sequenceflow1" sourceRef="startevent1" targetRef="serviceTask1"/>
