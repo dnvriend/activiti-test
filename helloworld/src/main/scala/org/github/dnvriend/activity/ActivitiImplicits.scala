@@ -63,15 +63,32 @@ object ActivitiImplicits {
     /**
       * All variables visible from the given execution scope (including parent scopes).
       */
-    def getVars(executionId: String): Try[Map[String, AnyRef]] = Try(service.getVariables(executionId).toMap)
+    def getVars(executionId: String): Try[Map[String, AnyRef]] =
+      Try(service.getVariables(executionId).toMap)
 
     /**
-      * Starts a new process instance in the latest version of the process
-      * definition with the given key.
+      * Starts a new process instance using the (BPMN) process's `id` attribute name as defined in the bpmn20.xml file.
+      * Note that this `id` in Activiti terminology is called the `key`, hence startProcessByKey()
+      * @param processDefinitionKey The process's `id` as defined in the bpmn20.xml file
       */
-    def startProcessByKey(key: String): Try[ProcessInstance] = Try(service.startProcessInstanceByKey(key))
-    def startProcessById(processDefinitionId: String): Try[ProcessInstance] = Try(service.startProcessInstanceById(processDefinitionId))
+    def startProcessByKey(processDefinitionKey: String): Try[ProcessInstance] =
+      Try(service.startProcessInstanceByKey(processDefinitionKey))
 
+    /**
+      * Starts a new process instance with the given process definition id, which should be a number.
+      * Deploying a process should return the `Deployment` which contains the deployment id
+      * @param processDefinitionId The process definition id
+      */
+    def startProcessById(processDefinitionId: String): Try[ProcessInstance] =
+      Try(service.startProcessInstanceById(processDefinitionId))
+
+    /**
+      * Starts a new process instance using the (BPMN) process's `id` attribute name as defined in the bpmn20.xml file.
+      * Note that this `id` in Activiti terminology is called the `key`, hence startProcessByKey()
+      * @param processDefinitionKey The process's `id` as defined in the bpmn20.xml file
+      * @param variables the variables to pass to the process instance
+      * @return
+      */
     def startProcessByKey(processDefinitionKey: String, variables: Map[String, AnyRef]): Try[ProcessInstance] =
       Try(service.startProcessInstanceByKey(processDefinitionKey, variables))
   }
