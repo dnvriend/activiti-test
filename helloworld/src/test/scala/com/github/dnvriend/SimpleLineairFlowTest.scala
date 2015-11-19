@@ -56,6 +56,7 @@ class SimpleLineairFlowTest extends TestSpec {
           task.getName shouldBe "Task A"
           task.getTaskDefinitionKey shouldBe "userTaskA"
           task.getProcessInstanceId shouldBe instance.getId
+          println("Completing taskA")
           taskService.completeTask(task.getId) should be a 'success
         }
 
@@ -66,6 +67,7 @@ class SimpleLineairFlowTest extends TestSpec {
           task.getName shouldBe "Task B"
           task.getTaskDefinitionKey shouldBe "userTaskB"
           task.getProcessInstanceId shouldBe instance.getId
+          println("Completing taskB")
           taskService.completeTask(task.getId) should be a 'success
         }
 
@@ -76,6 +78,7 @@ class SimpleLineairFlowTest extends TestSpec {
           task.getName shouldBe "Task C"
           task.getTaskDefinitionKey shouldBe "userTaskC"
           task.getProcessInstanceId shouldBe instance.getId
+          println("Completing taskC")
           taskService.completeTask(task.getId) should be a 'success
         }
 

@@ -20,9 +20,20 @@
         <property name="dataSource" ref="dataSource" />
         <property name="transactionManager" ref="transactionManager" />
         <property name="databaseSchemaUpdate" value="true" />
+        <!--+
+            | Note: timers are only fired when the job or async executor is enabled
+            | (i.e. jobExecutorActivate or asyncExecutorActivate needs to be set to true,
+            | since the job and async executor are disabled by default).
+            | see: online documentation p8.2.2: Timer Event Definitions
+            +-->
         <property name="asyncExecutorEnabled" value="false"/>
         <property name="jobExecutorActivate" value="false" />
         <property name="historyLevel" value="FULL"/>
+        <property name="eventListeners">
+            <list>
+                <bean class="com.github.dnvriend.activiti.event.LoggingEventListener" />
+            </list>
+        </property>
     </bean>
 
     <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">

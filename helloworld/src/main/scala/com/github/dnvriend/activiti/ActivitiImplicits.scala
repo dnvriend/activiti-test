@@ -19,8 +19,10 @@ package com.github.dnvriend.activiti
 import java.util.Date
 
 import org.activiti.engine.delegate.DelegateExecution
+import org.activiti.engine.delegate.event.ActivitiEvent
 import org.activiti.engine.history.{HistoricVariableUpdate, HistoricDetail, HistoricProcessInstance}
 import org.activiti.engine.identity.{Group, User}
+import org.activiti.engine.impl.persistence.entity.TaskEntity
 import org.activiti.engine.query.Query
 import org.activiti.engine.repository.{Deployment, DeploymentBuilder}
 import org.activiti.engine.runtime.{Job, Execution, ProcessInstance}
@@ -371,6 +373,33 @@ object ActivitiImplicits {
          |retries=$getRetries,
          |exceptionMessage=$getExceptionMessage,
          |tentantId=$getTenantId
+         |)
+       """.stripMargin
+    }
+  }
+
+  implicit class ActivitiEventImplicits(val event: ActivitiEvent) extends AnyVal {
+    def dump: String = {
+      import event._
+      s"""
+         |ActivitiEvent(
+         |type=${getType.name()},
+         |executionId=$getExecutionId,
+         |processInstanceId=$getProcessInstanceId,
+         |processDefinitionId=$getProcessDefinitionId,
+         |class=${event.getClass.getName}
+         |)
+       """.stripMargin
+    }
+  }
+
+  implicit class TaskEntityImplicits(val entity: TaskEntity) extends AnyVal {
+    def dump: String = {
+      import entity._
+      s"""
+         |TaskEntity(
+         |name=$getName
+         |eventName=$getEventName
          |)
        """.stripMargin
     }
