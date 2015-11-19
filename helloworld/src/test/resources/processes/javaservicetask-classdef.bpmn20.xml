@@ -11,9 +11,35 @@
 <process id="javaservicetask-classdef" name="Java Service Task Class Definition">
         <startEvent id="startevent1" name="Start"/>
         <serviceTask id="serviceTask1" name="Hello World Service" activiti:class="com.github.dnvriend.task.HelloWorldService"/>
+
         <scriptTask id="scripttask1" name="Printing message" scriptFormat="groovy">
+            <documentation>
+                see:  org.activiti.engine.impl.scripting.ScriptBindings
+                The following keys are available in the script engine:
+                "out", "out:print", "lang:import", "context", "elcontext", "print", "println"
+
+                see: org.activiti.engine.impl.scripting.VariableScopeResolver
+                The following entities are available (zie:
+                "execution" = org.activiti.engine.impl.persistence.entity.ExecutionEntity
+            </documentation>
             <script>
-                out:println "msg=" + msg;
+                out.println "===== scripttask scriptformat: Groovy ====="
+                out:println "===== Process variables ====="
+                execution.getVariables().each { key, value ->
+                    out:println "$key=$value"
+                }
+                out:println "============================"
+                out:println "Execution information:"
+                out:println "============================"
+                out:println "executionName=" + execution.name;
+                out:println "deploymentId=" + execution.deploymentId;
+                out:println "activityId=" + execution.activityId;
+                out:println "activityName=" + execution.activityName;
+                out:println "processInstanceId=" + execution.processInstanceId;
+                out:println "processDefinitionKey=" + execution.processDefinitionKey;
+                out:println "businessKey=" + execution.businessKey;
+                out:println "isOperating=" + execution.isOperating;
+                out.println "===========================================";
             </script>
         </scriptTask>
         <endEvent id="endevent1" name="End"/>

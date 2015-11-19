@@ -1,0 +1,23 @@
+<definitions id="definitions"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL
+             http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd
+             http://activiti.org/bpmn https://raw.githubusercontent.com/Activiti/Activiti/master/modules/activiti-bpmn-converter/src/main/resources/org/activiti/impl/bpmn/parser/activiti-bpmn-extensions-5.18.xsd"
+             xmlns:activiti="http://activiti.org/bpmn"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             targetNamespace="http://activiti.org/bpmn20">
+
+    <process id="SimpleLineairFlow" name="Simple Lineair Flow">
+        <startEvent id="startevent1" name="Start"/>
+        <userTask id="userTaskA" name="Task A"/>
+        <userTask id="userTaskB" name="Task B"/>
+        <userTask id="userTaskC" name="Task C"/>
+        <endEvent id="endevent1" name="End"/>
+
+        <sequenceFlow id="sequenceflow1" name="start to userTaskA" sourceRef="startevent1" targetRef="userTaskA"/>
+        <sequenceFlow id="sequenceflow2" name="userTaskA to userTaskB" sourceRef="userTaskA" targetRef="userTaskB"/>
+        <sequenceFlow id="sequenceflow3" name="userTaskB to userTaskC" sourceRef="userTaskB" targetRef="userTaskC"/>
+        <sequenceFlow id="sequenceflow4" name="userTaskC to end" sourceRef="userTaskC" targetRef="endevent1"/>
+    </process>
+
+</definitions>

@@ -16,6 +16,8 @@
 
 package com.github.dnvriend.activiti
 
+import java.util.Date
+
 import org.activiti.engine.delegate.DelegateExecution
 import org.activiti.engine.history.{HistoricVariableUpdate, HistoricDetail, HistoricProcessInstance}
 import org.activiti.engine.identity.{Group, User}
@@ -229,6 +231,7 @@ object ActivitiImplicits {
   }
 
   implicit class HistoricProcessInstanceImplicits(val history: HistoricProcessInstance) extends AnyVal {
+    def endTime: Option[Date] = Option(history.getEndTime)
     def dump: String = {
       import history._
       s"""
@@ -310,6 +313,7 @@ object ActivitiImplicits {
         |parentTaskId=$getParentTaskId,
         |tentantId=$getTenantId,
         |formKey=$getFormKey,
+        |suspended=$isSuspended,
         |taskLocalVariables=${getTaskLocalVariables.toMap},
         |processVariables=${getProcessVariables.toMap}
         |)
@@ -343,12 +347,12 @@ object ActivitiImplicits {
       s"""
          |Execution(
          |id=$getId,
-         |suspended=$isSuspended,
          |ended=$isEnded,
          |activityId=$getActivityId,
          |processInstanceId=$getProcessInstanceId,
          |parentId=$getParentId,
-         |tentantId=$getTenantId
+         |tentantId=$getTenantId,
+         |suspended=$isSuspended
          |)
        """.stripMargin
     }
