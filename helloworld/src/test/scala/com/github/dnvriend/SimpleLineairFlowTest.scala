@@ -95,6 +95,8 @@ class SimpleLineairFlowTest extends TestSpec {
 
       // delete the deployment
       repositoryService.deleteDeploymentById(deployment.id, cascade = true) should be a 'success
+      println("Sleeping")
+      Thread.sleep(10000)
     }
   }
 }

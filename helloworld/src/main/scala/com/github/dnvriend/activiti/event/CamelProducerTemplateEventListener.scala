@@ -25,11 +25,13 @@ class CamelProducerTemplateEventListener(producerTemplate: ProducerTemplate) ext
 
   def processEvent(event: ActivitiEvent): String = event.getType.name()
 
-  override def onEvent(event: ActivitiEvent): Unit = {
-    Try(producerTemplate.sendBody("activemq:topic:VirtualTopic.ActivitiEventTopic", processEvent(event))).recover {
-      case t: Throwable ⇒
-        t.printStackTrace()
-    }
+  override def onEvent(event: ActivitiEvent): Unit = Try {
+    println("Sending: " + event.getType.name())
+    producerTemplate.sendBody("activemq:topic:VirtualTopic.ActivitiEventTopic", processEvent(event))
+  }.recover {
+    case t: Throwable ⇒
+      t.printStackTrace()
   }
+
   override def isFailOnException: Boolean = false
 }

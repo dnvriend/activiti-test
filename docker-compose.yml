@@ -24,6 +24,8 @@ postgres:
 activemq:
   image: rmohr/activemq:5.10.0
   container_name: "activemq"
+  volumes:
+    - "./activemq/activemq.xml:/conf/activemq.xml"
   ports:
     - "61616:61616"
     - "8161:8161"
