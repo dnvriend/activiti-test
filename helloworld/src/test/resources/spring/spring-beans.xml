@@ -67,16 +67,12 @@
 
     <bean id="helloWorldRoute" class="com.github.dnvriend.camel.HelloWorldRoute"/>
 
-    <camel:camelContext id="camelContext">
+    <camel:camelContext id="camelContext" >
         <camel:routeBuilder ref="helloWorldRoute" />
-    </camel:camelContext>
-    
-    <bean id="followUpRoute" class="com.github.dnvriend.camel.Classify"/>
-    
-    <camel:camelContext id="ccFollowUp">
         <camel:routeBuilder ref="followUpRoute" />
     </camel:camelContext>
     
+    <bean id="followUpRoute" class="com.github.dnvriend.playround.followup.FollowUpRoutes"/>
     
 
 </beans>

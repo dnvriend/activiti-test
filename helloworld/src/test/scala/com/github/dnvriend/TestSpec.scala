@@ -30,13 +30,14 @@ import com.github.dnvriend.activiti.ActivitiImplicits.DeploymentBuilderImplicits
 import com.github.dnvriend.activiti.ActivitiService
 import org.springframework.context.ApplicationContext
 import org.springframework.context.support.ClassPathXmlApplicationContext
+import org.scalatest.FlatSpecLike
 
 
-trait TestSpec extends FlatSpec with Matchers with TryValues with OptionValues with Eventually with ActivitiService {
+trait TestSpec extends FlatSpecLike with Matchers with TryValues with OptionValues with Eventually with ActivitiService {
 
   implicit val p = PatienceConfig(timeout = 50.seconds)
   
-  val context: ApplicationContext = new ClassPathXmlApplicationContext("/spring/spring-beans.xml")
+  val springContext: ApplicationContext = new ClassPathXmlApplicationContext("/spring/spring-beans.xml")
   
   /**
    * Deploys a classPathResource relative to the 'processes' directory
