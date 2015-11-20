@@ -14,15 +14,15 @@
     <endEvent id="endevent1" name="End"></endEvent>
     <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow18" sourceRef="parallelgateway1" targetRef="exclusivegateway2"></sequenceFlow>
-    <endEvent id="endevent2" name="End"></endEvent>
-    <sequenceFlow id="flow20" sourceRef="exclusivegateway2" targetRef="endevent2">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${cancel == false}]]></conditionExpression>
+    <endEvent id="noNotify" name="NoNotify"></endEvent>
+    <sequenceFlow id="flow20" sourceRef="exclusivegateway2" targetRef="noNotify">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${notify == false}]]></conditionExpression>
     </sequenceFlow>
     <exclusiveGateway id="exclusivegateway3" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow22" sourceRef="parallelgateway1" targetRef="exclusivegateway3"></sequenceFlow>
-    <endEvent id="endevent3" name="End"></endEvent>
-    <sequenceFlow id="flow24" sourceRef="exclusivegateway3" targetRef="endevent3">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${notify == false}]]></conditionExpression>
+    <endEvent id="noCancellation" name="NoCancellation"></endEvent>
+    <sequenceFlow id="flow24" sourceRef="exclusivegateway3" targetRef="noCancellation">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${cancel == false}]]></conditionExpression>
     </sequenceFlow>
     <serviceTask id="retryCollection" name="Retry Collection" activiti:type="camel"></serviceTask>
     <sequenceFlow id="flow26" sourceRef="exclusivegateway1" targetRef="retryCollection">
@@ -31,19 +31,19 @@
     <sequenceFlow id="flow27" sourceRef="retryCollection" targetRef="endevent1"></sequenceFlow>
     <serviceTask id="notify" name="Send notification" activiti:type="camel"></serviceTask>
     <sequenceFlow id="flow28" sourceRef="exclusivegateway2" targetRef="notify">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${cancel == true}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${notify == true}]]></conditionExpression>
     </sequenceFlow>
     <serviceTask id="withdrawTicket" name="Withdraw ticket from playround" activiti:type="camel"></serviceTask>
     <sequenceFlow id="flow29" sourceRef="exclusivegateway1" targetRef="withdrawTicket">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${retry == false}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow30" sourceRef="withdrawTicket" targetRef="endevent1"></sequenceFlow>
-    <sequenceFlow id="flow31" sourceRef="notify" targetRef="endevent2"></sequenceFlow>
+    <sequenceFlow id="flow31" sourceRef="notify" targetRef="noNotify"></sequenceFlow>
     <serviceTask id="cancelSubscription" name="Cancel Subscription" activiti:type="camel"></serviceTask>
     <sequenceFlow id="flow32" sourceRef="exclusivegateway3" targetRef="cancelSubscription">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${notify == true}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${cancel == true}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="flow33" sourceRef="cancelSubscription" targetRef="endevent3"></sequenceFlow>
+    <sequenceFlow id="flow33" sourceRef="cancelSubscription" targetRef="noCancellation"></sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_followup">
     <bpmndi:BPMNPlane bpmnElement="followup" id="BPMNPlane_followup">
@@ -65,13 +65,13 @@
       <bpmndi:BPMNShape bpmnElement="exclusivegateway2" id="BPMNShape_exclusivegateway2">
         <omgdc:Bounds height="40.0" width="40.0" x="386.0" y="228.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="endevent2" id="BPMNShape_endevent2">
+      <bpmndi:BPMNShape bpmnElement="noNotify" id="BPMNShape_noNotify">
         <omgdc:Bounds height="35.0" width="35.0" x="557.0" y="320.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway3" id="BPMNShape_exclusivegateway3">
         <omgdc:Bounds height="40.0" width="40.0" x="385.0" y="380.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="endevent3" id="BPMNShape_endevent3">
+      <bpmndi:BPMNShape bpmnElement="noCancellation" id="BPMNShape_noCancellation">
         <omgdc:Bounds height="35.0" width="35.0" x="555.0" y="460.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="retryCollection" id="BPMNShape_retryCollection">

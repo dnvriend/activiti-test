@@ -1,19 +1,19 @@
 package com.github.dnvriend
 
-import com.github.dnvriend.playround.followup.FollowUpRoutes.PaymentRejectionWithHistory
-import com.github.dnvriend.playround.followup.FollowUpRoutes.PaymentRejection
-import scala.collection.JavaConversions._
-import org.apache.camel.test.junit4.CamelTestSupport
-import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.CamelContext
+import org.apache.camel.builder.RouteBuilder
+import org.apache.camel.test.junit4.CamelTestSupport
+import org.scalatest.BeforeAndAfterAll
 
-class FollowUpTest extends CamelTestSupport with TestSpec {
+import com.github.dnvriend.playround.followup.FollowUpRoutes.PaymentRejection
+import com.github.dnvriend.playround.followup.FollowUpRoutes.PaymentRejectionWithHistory
 
-  setUseRouteBuilder(true)
-  
-  override def context(): CamelContext = camelContext
+class FollowUpTest extends CamelTestSupport with TestSpec with BeforeAndAfterAll {
 
-  val testRoutes = new RouteBuilder {
+  override def createCamelContext(): CamelContext = camelContext
+  override protected def beforeAll(): Unit = setUp() // required as CamelTestSupport uses junit before for initialization
+
+  override def createRouteBuilder(): RouteBuilder = new RouteBuilder {
     def configure(): Unit = {
       from("direct:retryCollection").to("mock:retryCollection")
       from("direct:withdrawTicket").to("mock:withdrawTicket")
@@ -21,25 +21,34 @@ class FollowUpTest extends CamelTestSupport with TestSpec {
       from("direct:cancelSubscription").to("mock:cancelSubscription")
     }
   }
-  
+
+  lazy val mockRetryCollection = getMockEndpoint("mock:retryCollection")
+  lazy val mockWithdrawTicket = getMockEndpoint("mock:withdrawTicket")
+  lazy val mockNotify = getMockEndpoint("mock:notify")
+  lazy val mockCancelSubscription = getMockEndpoint("mock:cancelSubscription")
+
   "FollowUp" should "have a clue" in {
-    
+
     val deployExecute = deploy("followUpExecute.bpmn20.xml")
     val deployTrigger = deploy("followUpTrigger.bpmn20.xml")
-    
+
     deployExecute should be a 'success
     deployTrigger should be a 'success
-    
-    testRoutes.addRoutesToCamelContext(camelContext)
-    val endpoint = camelContext.getEndpoint("mock:notify")
-    getMockEndpoint("mock:notify").expectedMessageCount(1)
-    
+
     val rejection = PaymentRejection(0, 0, "P201601", "ABC", "DEF")
     val withHistory = PaymentRejectionWithHistory(rejection, List.empty)
-    
-    producerTemplate.sendBody("direct:rejectPayment", withHistory)
-    
+
+    val msgCount = 1000
+
+    mockRetryCollection.expectedMessageCount(0)
+    mockWithdrawTicket.expectedMessageCount(msgCount)
+    mockNotify.expectedMessageCount(0)
+    mockCancelSubscription.expectedMessageCount(msgCount)
+
+    1 to msgCount foreach { _ =>
+      producerTemplate.sendBody("direct:rejectPayment", withHistory)
+    }
+
     assertMockEndpointsSatisfied()
   }
-  
 }
