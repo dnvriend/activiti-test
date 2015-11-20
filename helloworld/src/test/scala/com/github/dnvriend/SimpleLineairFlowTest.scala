@@ -89,12 +89,12 @@ class SimpleLineairFlowTest extends TestSpec {
   }
 
   override protected def beforeAll(): Unit = {
-    startRoute("Consumer_A_ActivitiEventTopic").futureValue shouldBe 'started
-    startRoute("Consumer_B_ActivitiEventTopic").futureValue shouldBe 'started
+    startRoute("Consumer_A_ActivitiEventTopic").success.value shouldBe 'started
+    startRoute("Consumer_B_ActivitiEventTopic").success.value shouldBe 'started
   }
 
   override protected def afterAll(): Unit = {
-    stopRoute("Consumer_A_ActivitiEventTopic").futureValue shouldBe 'stopped
-    stopRoute("Consumer_B_ActivitiEventTopic").futureValue shouldBe 'stopped
+    stopRoute("Consumer_A_ActivitiEventTopic").success.value shouldBe 'stopped
+    stopRoute("Consumer_B_ActivitiEventTopic").success.value shouldBe 'stopped
   }
 }

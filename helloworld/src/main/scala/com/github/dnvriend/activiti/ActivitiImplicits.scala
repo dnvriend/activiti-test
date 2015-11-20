@@ -20,6 +20,7 @@ import java.util.Date
 
 import org.activiti.engine.delegate.DelegateExecution
 import org.activiti.engine.delegate.event.ActivitiEvent
+import org.activiti.engine.delegate.event.impl.ActivitiEntityEventImpl
 import org.activiti.engine.history.{HistoricVariableUpdate, HistoricDetail, HistoricProcessInstance}
 import org.activiti.engine.identity.{Group, User}
 import org.activiti.engine.impl.persistence.entity.TaskEntity
@@ -379,6 +380,24 @@ object ActivitiImplicits {
   }
 
   implicit class ActivitiEventImplicits(val event: ActivitiEvent) extends AnyVal {
+    def toMap: Map[String, Option[String]] = {
+      import event._
+      val map = Map(
+        "EVENT_TYPE" -> Option(getType.name),
+        "EXECUTION_ID" -> Option(getExecutionId),
+        "PROCESS_KEY" -> Option(getProcessDefinitionId).flatMap(_.split(":").headOption),
+        "PROCESS_INSTANCE_ID" -> Option(getProcessInstanceId),
+        "PROCESS_DEFINITION_ID" -> Option(getProcessDefinitionId)
+      )
+      val map2: Map[String, Option[String]] = event match {
+        case e: ActivitiEntityEventImpl => e.getEntity match {
+          case e: TaskEntity => e.toMap
+          case _ => Map.empty[String, Option[String]]
+        }
+        case _ => Map.empty[String, Option[String]]
+      }
+      map ++ map2
+    }
     def dump: String = {
       import event._
       s"""
@@ -394,6 +413,15 @@ object ActivitiImplicits {
   }
 
   implicit class TaskEntityImplicits(val entity: TaskEntity) extends AnyVal {
+    def toMap: Map[String, Option[String]] = {
+      import entity._
+      Map(
+        "TASK_ID" -> Option(getId),
+        "TASK_NAME" -> Option(getName),
+        "TASK_OWNER" -> Option(getOwner),
+        "TASK_ASSIGNEE" -> Option(getAssignee)
+      )
+    }
     def dump: String = {
       import entity._
       s"""

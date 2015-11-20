@@ -69,16 +69,16 @@ class SimpleCamelTaskTest extends TestSpec {
   }
 
   override protected def beforeAll(): Unit = {
-    startRoute("SimpleCamelCallProcess")
-    startRoute("startProcessFirst")
-    startRoute("startProcessSecond")
-    startRoute("startProcessThird")
+    startRoute("SimpleCamelCallProcess").success.value shouldBe 'started
+    startRoute("startProcessFirst").success.value shouldBe 'started
+    startRoute("startProcessSecond").success.value shouldBe 'started
+    startRoute("startProcessThird").success.value shouldBe 'started
   }
 
   override protected def afterAll(): Unit = {
-    stopRoute("SimpleCamelCallProcess")
-    stopRoute("startProcessFirst")
-    stopRoute("startProcessSecond")
-    stopRoute("startProcessThird")
+    stopRoute("SimpleCamelCallProcess").success.value shouldBe 'stopped
+    stopRoute("startProcessFirst").success.value shouldBe 'stopped
+    stopRoute("startProcessSecond").success.value shouldBe 'stopped
+    stopRoute("startProcessThird").success.value shouldBe 'stopped
   }
 }

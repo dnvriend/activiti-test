@@ -18,18 +18,18 @@ package com.github.dnvriend.camel
 
 import java.util.concurrent.TimeUnit
 
-import org.apache.camel.{ ServiceStatus, Route, CamelContext, Exchange }
+import org.apache.camel.{ CamelContext, Exchange, Route, ServiceStatus }
 
-import scala.concurrent.{ Promise, ExecutionContext, Future }
-import scala.util.Try
 import scala.collection.JavaConversions._
+import scala.concurrent.{ ExecutionContext, Future }
+import scala.util.Try
 
 object CamelImplicits {
 
   implicit class CamelContextImplicits(val context: CamelContext) extends AnyVal {
     def route(routeId: String): Option[Route] = Option(context.getRoute(routeId))
 
-    def start(routeId: String)(implicit ec: ExecutionContext): Future[ServiceStatus] = Future {
+    def start(routeId: String): Try[ServiceStatus] = Try {
       context.startRoute(routeId)
       var status = context.getRouteStatus(routeId)
       while (!status.isStarted) {
@@ -39,7 +39,7 @@ object CamelImplicits {
       status
     }
 
-    def stop(routeId: String)(implicit ec: ExecutionContext): Future[ServiceStatus] = Future {
+    def stop(routeId: String): Try[ServiceStatus] = Try {
       context.stopRoute(routeId, 2, TimeUnit.SECONDS)
       var status = context.getRouteStatus(routeId)
       while (!status.isStopped) {

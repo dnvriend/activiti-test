@@ -16,37 +16,33 @@
 
 package com.github.dnvriend
 
+import com.github.dnvriend.activiti.ActivitiImplicits.{ DeploymentBuilderImplicits, _ }
+import com.github.dnvriend.activiti.ActivitiService
+import com.github.dnvriend.camel.CamelImplicits._
 import org.activiti.engine.history.HistoricProcessInstance
+import org.activiti.engine.repository.Deployment
 import org.activiti.engine.runtime.ProcessInstance
 import org.activiti.engine.task.Task
 import org.apache.camel.ServiceStatus
-
-import scala.collection.JavaConverters.mapAsJavaMapConverter
-import scala.concurrent.Future
-import scala.concurrent.duration.DurationInt
-import scala.util.Try
-import org.activiti.engine.repository.Deployment
 import org.scalatest._
-import org.scalatest.concurrent.{ ScalaFutures, Eventually }
+import org.scalatest.concurrent.{ Eventually, ScalaFutures }
 import org.scalatest.time.Span.convertDurationToSpan
-import com.github.dnvriend.activiti.ActivitiImplicits.DeploymentBuilderImplicits
-import com.github.dnvriend.activiti.ActivitiService
 import org.springframework.context.ApplicationContext
 import org.springframework.context.support.ClassPathXmlApplicationContext
-import com.github.dnvriend.camel.CamelImplicits._
-import com.github.dnvriend.activiti.ActivitiImplicits._
+
+import scala.collection.JavaConverters.mapAsJavaMapConverter
+import scala.concurrent.duration.DurationInt
+import scala.util.Try
 
 trait TestSpec extends FlatSpec with Matchers with TryValues with OptionValues with Eventually with ScalaFutures with BeforeAndAfterAll with BeforeAndAfterEach with ActivitiService {
-
-  import scala.concurrent.ExecutionContext.Implicits.global
 
   implicit val p = PatienceConfig(timeout = 50.seconds)
 
   val context: ApplicationContext = new ClassPathXmlApplicationContext("/spring/spring-beans.xml")
 
-  def startRoute(routeId: String): Future[ServiceStatus] = camelContext.start(routeId)
+  def startRoute(routeId: String): Try[ServiceStatus] = camelContext.start(routeId)
 
-  def stopRoute(routeId: String): Future[ServiceStatus] = camelContext.stop(routeId)
+  def stopRoute(routeId: String): Try[ServiceStatus] = camelContext.stop(routeId)
 
   /**
    * Deploys a classPathResource relative to the 'processes' directory

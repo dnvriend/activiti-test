@@ -16,7 +16,7 @@
 
 package com.github.dnvriend.camel
 
-import org.apache.camel.LoggingLevel
+import org.apache.camel.{ Exchange, Processor, LoggingLevel }
 import org.apache.camel.builder.RouteBuilder
 
 /**
@@ -99,6 +99,7 @@ class HelloWorldRoute extends RouteBuilder {
 
   /**
    * Consumer A consuming messages from the ActivitiEventQueue
+   * and logging the messages
    */
   from("activemq:queue:Consumer.A.VirtualTopic.ActivitiEventTopic")
     .id("Consumer_A_ActivitiEventTopic")
@@ -107,9 +108,40 @@ class HelloWorldRoute extends RouteBuilder {
 
   /**
    * Consumer B consuming messages from the ActivitiEventQueue
+   * and logging the messages
    */
   from("activemq:queue:Consumer.B.VirtualTopic.ActivitiEventTopic")
     .id("Consumer_B_ActivitiEventTopic")
     .autoStartup(false)
     .log("received ${body}")
+
+  /**
+   * Consumer for EVENT_TYPE = 'TASK_CREATED' and TASK_NAME = 'Task A' messages
+   * it will complete that task
+   */
+  from("activemq:queue:Consumer.TaskA.VirtualTopic.ActivitiEventTopic")
+    .id("ConsumerCompleteTaskA")
+    .autoStartup(false)
+    .processRef("completeTaskAProcessor")
+  //    .log("received ${body}")
+
+  /**
+   * Consumer for EVENT_TYPE = 'TASK_CREATED' and TASK_NAME = 'Task B' messages
+   * it will complete that task
+   */
+  from("activemq:queue:Consumer.TaskB.VirtualTopic.ActivitiEventTopic")
+    .id("ConsumerCompleteTaskB")
+    .autoStartup(false)
+    .processRef("completeTaskBProcessor")
+  //    .log("received ${body}")
+
+  /**
+   * Consumer for EVENT_TYPE = 'TASK_CREATED' and TASK_NAME = 'Task C' messages
+   * it will complete that task
+   */
+  from("activemq:queue:Consumer.TaskC.VirtualTopic.ActivitiEventTopic")
+    .id("ConsumerCompleteTaskC")
+    .autoStartup(false)
+    .processRef("completeTaskCProcessor")
+  //    .log("received ${body}")
 }

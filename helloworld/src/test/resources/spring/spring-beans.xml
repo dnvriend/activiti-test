@@ -51,6 +51,21 @@
     <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService" />
     <bean id="identityService" factory-bean="processEngine" factory-method="getIdentityService" />
 
+    <bean id="completeTaskAProcessor" class="com.github.dnvriend.camel.CompleteTaskProcessor">
+        <constructor-arg index="0" ref="taskService" />
+        <constructor-arg index="1" value="Task A" />
+    </bean>
+
+    <bean id="completeTaskBProcessor" class="com.github.dnvriend.camel.CompleteTaskProcessor">
+        <constructor-arg index="0" ref="taskService" />
+        <constructor-arg index="1" value="Task B" />
+    </bean>
+
+    <bean id="completeTaskCProcessor" class="com.github.dnvriend.camel.CompleteTaskProcessor">
+        <constructor-arg index="0" ref="taskService" />
+        <constructor-arg index="1" value="Task C" />
+    </bean>
+
     <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="tcp://boot2docker:61616" />
     </bean>
@@ -69,9 +84,10 @@
         <property name="configuration" ref="jmsConfig"/>
     </bean>
 
+    <!--+
+        | Routes
+        +-->
     <bean id="helloWorldRoute" class="com.github.dnvriend.camel.HelloWorldRoute"/>
-
-
     <bean id="followUpRoute" class="com.github.dnvriend.camel.Classify"/>
 
     <!--+

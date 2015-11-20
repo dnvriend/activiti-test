@@ -16,14 +16,18 @@
 
 package com.github.dnvriend.activiti.event
 
-import org.activiti.engine.delegate.event.{ ActivitiEventType, ActivitiEvent, ActivitiEventListener }
+import com.github.dnvriend.activiti.ActivitiImplicits._
+import org.activiti.engine.delegate.event.{ ActivitiEvent, ActivitiEventListener, ActivitiEventType }
 import org.apache.camel.ProducerTemplate
+import org.json4s.native.Serialization
+import org.json4s.native.Serialization._
+import org.json4s.{ Formats, NoTypeHints }
 
 import scala.util.Try
 
 class CamelProducerTemplateEventListener(producerTemplate: ProducerTemplate) extends ActivitiEventListener {
 
-  def processEvent(event: ActivitiEvent): String = event.getType.name()
+  implicit val formats: Formats = Serialization.formats(NoTypeHints)
 
   override def onEvent(event: ActivitiEvent): Unit = event.getType match {
     case ActivitiEventType.TASK_CREATED   ⇒ sendEvent(event)
@@ -31,6 +35,9 @@ class CamelProducerTemplateEventListener(producerTemplate: ProducerTemplate) ext
     case ActivitiEventType.TASK_COMPLETED ⇒ sendEvent(event)
     case _                                ⇒ //println("Skipping: " + event.getType.name)
   }
+
+  def processEvent(event: ActivitiEvent): String =
+    write(event.toMap.collect { case (key, Some(value)) ⇒ (key, value) })
 
   def sendEvent(event: ActivitiEvent): Unit = Try {
     println("Sending: " + event.getType.name())
