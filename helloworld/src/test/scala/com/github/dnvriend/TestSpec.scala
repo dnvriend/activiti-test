@@ -52,3 +52,12 @@ trait TestSpec extends FlatSpec with Matchers with TryValues with OptionValues w
   def requestBodyAndHeaders(endpointUrl: String, body: String, headers: Map[String, AnyRef]): Try[Unit] =
     Try(producerTemplate.requestBodyAndHeaders(endpointUrl, body, headers.asJava))
 }
+
+trait RichTestSpec extends TestSpec {
+  
+  import org.github.dnvriend.activity.ActivitiImplicits._
+  
+  def deploy(processDefPath: String) = 
+    repositoryService.createDeployment().addClasspathResource(processDefPath).doDeploy
+  
+}
