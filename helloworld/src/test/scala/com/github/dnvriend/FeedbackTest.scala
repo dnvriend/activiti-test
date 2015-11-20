@@ -4,7 +4,7 @@ import com.github.dnvriend.activiti.ActivitiImplicits._
 import scala.collection.JavaConversions._
 import org.activiti.engine.task.Task
 
-class FeedbackTest extends RichTestSpec {
+class FeedbackTest extends TestSpec {
 
   def tasks: List[Task] = taskService.createTaskQuery().list().toList
   def validateTask = taskService.createTaskQuery().taskName("Validate")
