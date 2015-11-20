@@ -77,7 +77,7 @@
         | see: http://camel.apache.org/spring.html
         | see: http://camel.apache.org/configuring-route-startup-ordering-and-autostartup.html
         +-->
-    <camel:camelContext id="camelContext" autoStartup="">
+    <camel:camelContext id="camelContext">
         <camel:template id="producerTemplate" />
         <camel:routeBuilder ref="helloWorldRoute" />
     </camel:camelContext>
