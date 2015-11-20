@@ -47,6 +47,8 @@ class HelloWorldRoute extends RouteBuilder {
      * and other process variables that have been saved in the Activiti process.
      */
     from("activiti:SimpleCamelCallProcess:simpleCall")
+      .id("SimpleCamelCallProcess")
+      .autoStartup(false)
       .log(LoggingLevel.INFO, "activiti:SimpleCamelCallProcess:simpleCall")
       .to("activemq:queue:LogQueue")
 
@@ -55,12 +57,16 @@ class HelloWorldRoute extends RouteBuilder {
      * no bells and whistles
      */
     from("direct:startProcessFirst")
+      .id("startProcessFirst")
+      .autoStartup(false)
       .to("activiti:javaservicetask-classdef")
 
     /**
      * Launch the activiti process with a process initiator 'kermit'
      */
     from("direct:startProcessSecond")
+      .id("startProcessSecond")
+      .autoStartup(false)
       .setHeader("CamelProcessInitiatorHeader", constant("kermit"))
       .to("activiti:javaservicetask-classdef?processInitiatorHeaderName=CamelProcessInitiatorHeader")
 
@@ -69,6 +75,8 @@ class HelloWorldRoute extends RouteBuilder {
      * that will set headers needed for the execution of a process
      */
     from("direct:startProcessThird")
+      .id("startProcessThird")
+      .autoStartup(false)
       .process(new ActivitiPropertiesProcessor)
       .to("activiti:javaservicetask-classdef")
     //      .to("log:startProcessThird?showAll=true")
@@ -77,21 +85,31 @@ class HelloWorldRoute extends RouteBuilder {
      * Consuming messages from the LogQueue
      */
     from("activemq:queue:LogQueue")
-      .id("Consume from LogQueue")
+      .id("ConsumeFromLogQueue")
+      .autoStartup(false)
       .to("log:Consume from LogQueue?showAll=true")
   }
+
+  /**
+   * Should always be running
+   */
+  from("direct:sendToActivitiEventTopic")
+    .id("sendToActivitiEventsTopic")
+    .to("activemq:topic:VirtualTopic.ActivitiEventTopic")
 
   /**
    * Consumer A consuming messages from the ActivitiEventQueue
    */
   from("activemq:queue:Consumer.A.VirtualTopic.ActivitiEventTopic")
-    .id("Consumer A from ActivitiEventTopic")
+    .id("Consumer_A_ActivitiEventTopic")
+    .autoStartup(false)
     .log("received ${body}")
 
   /**
    * Consumer B consuming messages from the ActivitiEventQueue
    */
   from("activemq:queue:Consumer.B.VirtualTopic.ActivitiEventTopic")
-    .id("Consumer B from ActivitiEventTopic")
+    .id("Consumer_B_ActivitiEventTopic")
+    .autoStartup(false)
     .log("received ${body}")
 }

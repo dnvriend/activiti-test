@@ -35,6 +35,7 @@
                 <bean id="camelProducerTemplateEventListener" class="com.github.dnvriend.activiti.event.CamelProducerTemplateEventListener">
                     <constructor-arg index="0" ref="producerTemplate" />
                 </bean>
+                <!--<bean id="loggingEventListener" class="com.github.dnvriend.activiti.event.LoggingEventListener" />-->
             </list>
         </property>
     </bean>

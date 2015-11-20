@@ -16,7 +16,7 @@
 
 package com.github.dnvriend.activiti.event
 
-import org.activiti.engine.delegate.event.{ ActivitiEvent, ActivitiEventListener }
+import org.activiti.engine.delegate.event.{ ActivitiEventType, ActivitiEvent, ActivitiEventListener }
 import org.apache.camel.ProducerTemplate
 
 import scala.util.Try
@@ -25,9 +25,16 @@ class CamelProducerTemplateEventListener(producerTemplate: ProducerTemplate) ext
 
   def processEvent(event: ActivitiEvent): String = event.getType.name()
 
-  override def onEvent(event: ActivitiEvent): Unit = Try {
+  override def onEvent(event: ActivitiEvent): Unit = event.getType match {
+    case ActivitiEventType.TASK_CREATED   ⇒ sendEvent(event)
+    case ActivitiEventType.TASK_ASSIGNED  ⇒ sendEvent(event)
+    case ActivitiEventType.TASK_COMPLETED ⇒ sendEvent(event)
+    case _                                ⇒ //println("Skipping: " + event.getType.name)
+  }
+
+  def sendEvent(event: ActivitiEvent): Unit = Try {
     println("Sending: " + event.getType.name())
-    producerTemplate.sendBody("activemq:topic:VirtualTopic.ActivitiEventTopic", processEvent(event))
+    producerTemplate.sendBody("direct:sendToActivitiEventTopic", processEvent(event))
   }.recover {
     case t: Throwable ⇒
       t.printStackTrace()
