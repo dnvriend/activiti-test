@@ -30,6 +30,8 @@ licenses +=("Apache-2.0", url("http://opensource.org/licenses/apache2.0.php"))
 
 parallelExecution := false
 
+fork in Test := true
+
 // enable scala code formatting //
 import scalariform.formatter.preferences._
 

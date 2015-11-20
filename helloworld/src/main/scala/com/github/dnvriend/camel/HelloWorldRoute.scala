@@ -86,12 +86,12 @@ class HelloWorldRoute extends RouteBuilder {
    */
   from("activemq:queue:Consumer.A.VirtualTopic.ActivitiEventTopic")
     .id("Consumer A from ActivitiEventTopic")
-    .to("log:Consumer A from ActivitiEventTopic?showAll=true")
+    .log("received ${body}")
 
   /**
    * Consumer B consuming messages from the ActivitiEventQueue
    */
   from("activemq:queue:Consumer.B.VirtualTopic.ActivitiEventTopic")
     .id("Consumer B from ActivitiEventTopic")
-    .to("log:Consumer B from ActivitiEventTopic?showAll=true")
+    .log("received ${body}")
 }
