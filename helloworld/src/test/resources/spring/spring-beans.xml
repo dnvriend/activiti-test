@@ -70,5 +70,13 @@
     <camel:camelContext id="camelContext">
         <camel:routeBuilder ref="helloWorldRoute" />
     </camel:camelContext>
+    
+    <bean id="followUpRoute" class="com.github.dnvriend.camel.Classify"/>
+    
+    <camel:camelContext id="ccFollowUp">
+        <camel:routeBuilder ref="followUpRoute" />
+    </camel:camelContext>
+    
+    
 
 </beans>
