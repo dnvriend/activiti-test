@@ -16,10 +16,20 @@
 
 package com.github.dnvriend.activiti.event
 
-import org.activiti.engine.delegate.event.{ ActivitiEvent, BaseEntityEventListener }
+import org.activiti.engine.delegate.event.{ ActivitiEvent, ActivitiEventListener }
+import org.apache.camel.ProducerTemplate
 
-class LoggingBaseEntityEventListener extends BaseEntityEventListener {
-  override def onCreate(event: ActivitiEvent): Unit = {
-    super.onCreate(event)
+import scala.util.Try
+
+class CamelProducerTemplateEventListener(producerTemplate: ProducerTemplate) extends ActivitiEventListener {
+
+  def processEvent(event: ActivitiEvent): String = event.getType.name()
+
+  override def onEvent(event: ActivitiEvent): Unit = {
+    Try(producerTemplate.sendBody("activemq:topic:VirtualTopic.ActivitiEventTopic", processEvent(event))).recover {
+      case t: Throwable ⇒
+        t.printStackTrace()
+    }
   }
+  override def isFailOnException: Boolean = false
 }

@@ -3,7 +3,8 @@
        xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring-2.11.0.xsd">
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring-2.11.0.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring-2.13.1.xsd">
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="org.h2.Driver" />
@@ -31,7 +32,9 @@
         <property name="historyLevel" value="FULL"/>
         <property name="eventListeners">
             <list>
-                <bean class="com.github.dnvriend.activiti.event.LoggingEventListener" />
+                <bean id="camelProducerTemplateEventListener" class="com.github.dnvriend.activiti.event.CamelProducerTemplateEventListener">
+                    <constructor-arg index="0" ref="producerTemplate" />
+                </bean>
             </list>
         </property>
     </bean>
@@ -67,16 +70,20 @@
 
     <bean id="helloWorldRoute" class="com.github.dnvriend.camel.HelloWorldRoute"/>
 
-    <camel:camelContext id="camelContext">
+
+    <bean id="followUpRoute" class="com.github.dnvriend.camel.Classify"/>
+
+    <!--+
+        | see: http://camel.apache.org/spring.html
+        | see: http://camel.apache.org/configuring-route-startup-ordering-and-autostartup.html
+        +-->
+    <camel:camelContext id="camelContext" autoStartup="">
+        <camel:template id="producerTemplate" />
         <camel:routeBuilder ref="helloWorldRoute" />
     </camel:camelContext>
-    
-    <bean id="followUpRoute" class="com.github.dnvriend.camel.Classify"/>
-    
+
     <camel:camelContext id="ccFollowUp">
         <camel:routeBuilder ref="followUpRoute" />
     </camel:camelContext>
-    
-    
 
 </beans>

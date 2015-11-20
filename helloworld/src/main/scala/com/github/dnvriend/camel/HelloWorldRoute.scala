@@ -80,4 +80,18 @@ class HelloWorldRoute extends RouteBuilder {
       .id("Consume from LogQueue")
       .to("log:Consume from LogQueue?showAll=true")
   }
+
+  /**
+   * Consumer A consuming messages from the ActivitiEventQueue
+   */
+  from("activemq:topic:Consumer.A.VirtualTopic.ActivitiEventTopic")
+    .id("Consumer A from ActivitiEventTopic")
+    .to("log:Consumer A from ActivitiEventTopic?showAll=true")
+
+  /**
+   * Consumer B consuming messages from the ActivitiEventQueue
+   */
+  from("activemq:topic:Consumer.B.VirtualTopic.ActivitiEventTopic")
+    .id("Consumer B from ActivitiEventTopic")
+    .to("log:Consumer B from ActivitiEventTopic?showAll=true")
 }
