@@ -62,9 +62,9 @@ trait TestSpec extends FlatSpecLike with Matchers with TryValues with OptionValu
   def getHistory(id: String): Option[HistoricProcessInstance] =
     historyService.createHistoricProcessInstanceQuery().processInstanceId(id).single
 
-  def sendBodyAndHeaders(endpointUrl: String, body: String = "", headers: Map[String, AnyRef] = Map()): Try[Unit] =
+  def sendBodyAndHeaders(endpointUrl: String, body: Object = "", headers: Map[String, AnyRef] = Map()): Try[Unit] =
     Try(producerTemplate.sendBodyAndHeaders(endpointUrl, body, headers.asJava))
 
-  def requestBodyAndHeaders(endpointUrl: String, body: String, headers: Map[String, AnyRef]): Try[Unit] =
+  def requestBodyAndHeaders(endpointUrl: String, body: Object, headers: Map[String, AnyRef]): Try[Unit] =
     Try(producerTemplate.requestBodyAndHeaders(endpointUrl, body, headers.asJava))
 }

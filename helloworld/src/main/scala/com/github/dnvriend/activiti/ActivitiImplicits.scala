@@ -95,6 +95,17 @@ object ActivitiImplicits {
       */
     def startProcessByKey(processDefinitionKey: String, variables: Map[String, AnyRef]): Try[ProcessInstance] =
       Try(service.startProcessInstanceByKey(processDefinitionKey, variables))
+      
+      
+    /**
+      * Starts a new process instance using the (BPMN) process's `id` attribute name as defined in the bpmn20.xml file.
+      * Note that this `id` in Activiti terminology is called the `key`, hence startProcessByKey()
+      * @param processDefinitionKey The process's `id` as defined in the bpmn20.xml file
+      * @param variables the variables to pass to the process instance
+      * @return
+      */
+    def startProcessByKey(processDefinitionKey: String, businessKey: String, variables: Map[String, AnyRef]): Try[ProcessInstance] =
+      Try(service.startProcessInstanceByKey(processDefinitionKey, businessKey, variables))
   }
 
   implicit class IdentityServiceImplicits(val service: IdentityService) extends AnyVal {
