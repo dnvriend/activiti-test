@@ -10,6 +10,7 @@ libraryDependencies ++= {
   val akkaVersion = "2.4.0"
   val activitiVersion = "5.19.0"
   val activemqVersion = "5.10.0"
+  val camelVersion = "2.13.1"
   Seq(
     "org.activiti" % "activiti-engine" % activitiVersion withSources() withJavadoc(),
     "org.activiti" % "activiti-camel" % activitiVersion withSources() withJavadoc(),
@@ -22,7 +23,8 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test",
     "com.h2database" % "h2" % "1.4.190" % "test",
     "org.codehaus.groovy" % "groovy-all" % "2.2.0" % "test",
-    "org.scalatest" %% "scalatest" % "2.2.4" % "test"
+    "org.scalatest" %% "scalatest" % "2.2.4" % "test",
+    "org.apache.camel" % "camel-test" % camelVersion % "test"
   )
 }
 

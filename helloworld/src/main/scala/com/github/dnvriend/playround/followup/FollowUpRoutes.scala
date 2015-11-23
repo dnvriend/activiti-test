@@ -28,22 +28,6 @@ object FollowUpRoutes {
 
   case class PaymentRejection(orderId: Int, orderItemId: Int, playround: String, mutationCode: String, reasonCode: String)
   case class PaymentRejectionWithHistory(rejection: PaymentRejection, history: Seq[PaymentRejection])
-//
-//  def paymentRejectionToMap(rejection: PaymentRejection): Map[String, Any] = {
-//    import rejection._
-//    Map(
-//      "orderId" -> orderId,
-//      "orderItemId" -> orderItemId,
-//      "playround" -> playround,
-//      "mutationCode" -> mutationCode,
-//      "reasonCode" -> reasonCode
-//    )
-//  }
-//
-//  def rejectionHistoryMap(history: PaymentRejectionWithHistory): Map[String, Any] = Map(
-//    "rejection" -> history.rejection,
-//    "history" -> history.history
-//  )
   
   class ToMessage extends Processor {
     
@@ -60,14 +44,12 @@ object FollowUpRoutes {
 class FollowUpRoutes extends RouteBuilder {
 
   import FollowUpRoutes._
-
   
   def configure(): Unit = {
 
     val messageProcessor = new ToMessage
     from("direct:rejectPayment")
       .to("activiti:followup")
-//      .process(messageProcessor)
       
     from("activiti:followup:retryCollection")
       .to("direct:retryCollection")

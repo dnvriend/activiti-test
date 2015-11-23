@@ -27,7 +27,7 @@ class FollowUpTest extends CamelTestSupport with TestSpec with BeforeAndAfterAll
   lazy val mockNotify = getMockEndpoint("mock:notify")
   lazy val mockCancelSubscription = getMockEndpoint("mock:cancelSubscription")
 
-  "FollowUp" should "have a clue" in {
+  "FollowUp" should "trigger actions in line with the classification of the payment rejection" in {
 
     val deployExecute = deploy("followUpExecute.bpmn20.xml")
     val deployTrigger = deploy("followUpTrigger.bpmn20.xml")
