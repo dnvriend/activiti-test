@@ -17,22 +17,11 @@
 package com.github.dnvriend
 
 import com.github.dnvriend.activiti.ActivitiImplicits._
-import org.activiti.engine.history.HistoricProcessInstance
-import org.activiti.engine.runtime.ProcessInstance
-import org.activiti.engine.task.Task
 
 class SimpleLineairFlowTest extends TestSpec {
 
-  def getProcessInstance(id: String): Option[ProcessInstance] =
-    runtimeService.createProcessInstanceQuery().processInstanceId(id).single
-
-  def getTask(id: String): Option[Task] =
-    taskService.createTaskQuery().processInstanceId(id).single
-
-  def getHistory(id: String): Option[HistoricProcessInstance] =
-    historyService.createHistoricProcessInstanceQuery().processInstanceId(id).single
-
   "SimpleLineairFlow" should "push process through steps A, B and C" in {
+
     val deploymentOperation = deploy("simple-lineair-flow.bpmn20.xml")
     deploymentOperation should be a 'success
 
@@ -95,6 +84,17 @@ class SimpleLineairFlowTest extends TestSpec {
 
       // delete the deployment
       repositoryService.deleteDeploymentById(deployment.id, cascade = true) should be a 'success
+
     }
+  }
+
+  override protected def beforeAll(): Unit = {
+    startRoute("Consumer_A_ActivitiEventTopic").success.value shouldBe 'started
+    startRoute("Consumer_B_ActivitiEventTopic").success.value shouldBe 'started
+  }
+
+  override protected def afterAll(): Unit = {
+    stopRoute("Consumer_A_ActivitiEventTopic").success.value shouldBe 'stopped
+    stopRoute("Consumer_B_ActivitiEventTopic").success.value shouldBe 'stopped
   }
 }

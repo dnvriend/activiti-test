@@ -3,7 +3,8 @@
        xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring-2.11.0.xsd">
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring-2.11.0.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring-2.13.1.xsd">
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="org.h2.Driver" />
@@ -31,7 +32,10 @@
         <property name="historyLevel" value="FULL"/>
         <property name="eventListeners">
             <list>
-                <bean class="com.github.dnvriend.activiti.event.LoggingEventListener" />
+                <bean id="camelProducerTemplateEventListener" class="com.github.dnvriend.activiti.event.CamelProducerTemplateEventListener">
+                    <constructor-arg index="0" ref="producerTemplate" />
+                </bean>
+                <!--<bean id="loggingEventListener" class="com.github.dnvriend.activiti.event.LoggingEventListener" />-->
             </list>
         </property>
     </bean>
@@ -46,6 +50,21 @@
     <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService" />
     <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService" />
     <bean id="identityService" factory-bean="processEngine" factory-method="getIdentityService" />
+
+    <bean id="completeTaskAProcessor" class="com.github.dnvriend.camel.CompleteTaskProcessor">
+        <constructor-arg index="0" ref="taskService" />
+        <constructor-arg index="1" value="Task A" />
+    </bean>
+
+    <bean id="completeTaskBProcessor" class="com.github.dnvriend.camel.CompleteTaskProcessor">
+        <constructor-arg index="0" ref="taskService" />
+        <constructor-arg index="1" value="Task B" />
+    </bean>
+
+    <bean id="completeTaskCProcessor" class="com.github.dnvriend.camel.CompleteTaskProcessor">
+        <constructor-arg index="0" ref="taskService" />
+        <constructor-arg index="1" value="Task C" />
+    </bean>
 
     <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="tcp://boot2docker:61616" />
@@ -65,14 +84,23 @@
         <property name="configuration" ref="jmsConfig"/>
     </bean>
 
+    <!--+
+        | Routes
+        +-->
     <bean id="helloWorldRoute" class="com.github.dnvriend.camel.HelloWorldRoute"/>
+    <bean id="followUpRoute" class="com.github.dnvriend.playround.followup.FollowUpRoutes"/>
 
-    <camel:camelContext id="camelContext" >
+    <!--+
+        | see: http://camel.apache.org/spring.html
+        | see: http://camel.apache.org/configuring-route-startup-ordering-and-autostartup.html
+        +-->
+    <camel:camelContext id="camelContext">
+        <camel:template id="producerTemplate" />
         <camel:routeBuilder ref="helloWorldRoute" />
         <camel:routeBuilder ref="followUpRoute" />
     </camel:camelContext>
     
-    <bean id="followUpRoute" class="com.github.dnvriend.playround.followup.FollowUpRoutes"/>
+
     
 
 </beans>

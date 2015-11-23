@@ -38,4 +38,5 @@ check_for_wildfly_image
 check_for_activiti_image
 echo "Waiting on Activiti..."
 wait_for_server
+open http://admin:admin@$MACHINE_IP:8161/admin
 open http://kermit:kermit@$MACHINE_IP:8080/activiti-explorer

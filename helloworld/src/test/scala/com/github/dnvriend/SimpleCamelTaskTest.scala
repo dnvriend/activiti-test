@@ -67,4 +67,18 @@ class SimpleCamelTaskTest extends TestSpec {
       repositoryService.deleteDeploymentById(deployment.id, cascade = true) should be a 'success
     }
   }
+
+  override protected def beforeAll(): Unit = {
+    startRoute("SimpleCamelCallProcess").success.value shouldBe 'started
+    startRoute("startProcessFirst").success.value shouldBe 'started
+    startRoute("startProcessSecond").success.value shouldBe 'started
+    startRoute("startProcessThird").success.value shouldBe 'started
+  }
+
+  override protected def afterAll(): Unit = {
+    stopRoute("SimpleCamelCallProcess").success.value shouldBe 'stopped
+    stopRoute("startProcessFirst").success.value shouldBe 'stopped
+    stopRoute("startProcessSecond").success.value shouldBe 'stopped
+    stopRoute("startProcessThird").success.value shouldBe 'stopped
+  }
 }

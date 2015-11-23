@@ -16,12 +16,40 @@
 
 package com.github.dnvriend.camel
 
-import org.apache.camel.Exchange
+import java.util.concurrent.TimeUnit
 
-import scala.util.Try
+import org.apache.camel.{ CamelContext, Exchange, Route, ServiceStatus }
+
 import scala.collection.JavaConversions._
+import scala.concurrent.{ ExecutionContext, Future }
+import scala.util.Try
 
 object CamelImplicits {
+
+  implicit class CamelContextImplicits(val context: CamelContext) extends AnyVal {
+    def route(routeId: String): Option[Route] = Option(context.getRoute(routeId))
+
+    def start(routeId: String): Try[ServiceStatus] = Try {
+      context.startRoute(routeId)
+      var status = context.getRouteStatus(routeId)
+      while (!status.isStarted) {
+        Thread.sleep(300)
+        status = context.getRouteStatus(routeId)
+      }
+      status
+    }
+
+    def stop(routeId: String): Try[ServiceStatus] = Try {
+      context.stopRoute(routeId, 2, TimeUnit.SECONDS)
+      var status = context.getRouteStatus(routeId)
+      while (!status.isStopped) {
+        Thread.sleep(300)
+        status = context.getRouteStatus(routeId)
+      }
+      status
+    }
+  }
+
   implicit class CamelExchangeImplicits(val exchange: Exchange) extends AnyVal {
     /**
      * Sets the header on the in exchange
