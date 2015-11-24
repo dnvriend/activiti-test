@@ -37,18 +37,18 @@ trait ActivitiService {
    * This is read-only while the application is running, but may be
    * reloaded if the implementation supports this.
    */
-  val context: ApplicationContext
+  val springContext: ApplicationContext
 
   /**
    * Single instance of the Activity ProcessEngine
    */
-  lazy val processEngine: ProcessEngine = context.bean("processEngine")
+  lazy val processEngine: ProcessEngine = springContext.bean("processEngine")
 
   /**
    * Interface used to represent the context used to configure routes and the policies to use during
    * message exchanges between endpoints.
    */
-  lazy val camelContext: CamelContext = context.bean("camelContext")
+  lazy val camelContext: CamelContext = springContext.bean("camelContext")
 
   /**
    * Template for working with Camel and sending Message instances in an Exchange to an Endpoint.

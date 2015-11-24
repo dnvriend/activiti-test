@@ -29,16 +29,17 @@ import org.scalatest.concurrent.{ Eventually, ScalaFutures }
 import org.scalatest.time.Span.convertDurationToSpan
 import org.springframework.context.ApplicationContext
 import org.springframework.context.support.ClassPathXmlApplicationContext
+import org.scalatest.FlatSpecLike
 
 import scala.collection.JavaConverters.mapAsJavaMapConverter
 import scala.concurrent.duration.DurationInt
 import scala.util.Try
 
-trait TestSpec extends FlatSpec with Matchers with TryValues with OptionValues with Eventually with ScalaFutures with BeforeAndAfterAll with BeforeAndAfterEach with ActivitiService {
+trait TestSpec extends FlatSpecLike with Matchers with TryValues with OptionValues with Eventually with ScalaFutures with BeforeAndAfterAll with BeforeAndAfterEach with ActivitiService {
 
   implicit val p = PatienceConfig(timeout = 50.seconds)
 
-  val context: ApplicationContext = new ClassPathXmlApplicationContext("/spring/spring-beans.xml")
+  val springContext: ApplicationContext = new ClassPathXmlApplicationContext("/spring/spring-beans.xml")
 
   def startRoute(routeId: String): Try[ServiceStatus] = camelContext.start(routeId)
 
@@ -61,9 +62,9 @@ trait TestSpec extends FlatSpec with Matchers with TryValues with OptionValues w
   def getHistory(id: String): Option[HistoricProcessInstance] =
     historyService.createHistoricProcessInstanceQuery().processInstanceId(id).single
 
-  def sendBodyAndHeaders(endpointUrl: String, body: String = "", headers: Map[String, AnyRef] = Map()): Try[Unit] =
+  def sendBodyAndHeaders(endpointUrl: String, body: Object = "", headers: Map[String, AnyRef] = Map()): Try[Unit] =
     Try(producerTemplate.sendBodyAndHeaders(endpointUrl, body, headers.asJava))
 
-  def requestBodyAndHeaders(endpointUrl: String, body: String, headers: Map[String, AnyRef]): Try[Unit] =
+  def requestBodyAndHeaders(endpointUrl: String, body: Object, headers: Map[String, AnyRef]): Try[Unit] =
     Try(producerTemplate.requestBodyAndHeaders(endpointUrl, body, headers.asJava))
 }

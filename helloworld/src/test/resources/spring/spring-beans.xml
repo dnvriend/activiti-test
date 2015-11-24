@@ -88,7 +88,7 @@
         | Routes
         +-->
     <bean id="helloWorldRoute" class="com.github.dnvriend.camel.HelloWorldRoute"/>
-    <bean id="followUpRoute" class="com.github.dnvriend.camel.Classify"/>
+    <bean id="followUpRoute" class="com.github.dnvriend.playround.followup.FollowUpRoutes"/>
 
     <!--+
         | see: http://camel.apache.org/spring.html
@@ -97,10 +97,10 @@
     <camel:camelContext id="camelContext">
         <camel:template id="producerTemplate" />
         <camel:routeBuilder ref="helloWorldRoute" />
-    </camel:camelContext>
-
-    <camel:camelContext id="ccFollowUp">
         <camel:routeBuilder ref="followUpRoute" />
     </camel:camelContext>
+    
+
+    
 
 </beans>
